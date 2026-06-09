@@ -1,26 +1,26 @@
 # Skills
 
-Personal Codex skills that can be installed into `~/.codex/skills`.
+Personal agent skills installable with Vercel's official `skills` CLI.
 
 ## Install
 
-Install a skill from this repo with the bundled Codex skill installer:
+Install a specific skill from this repo:
 
 ```bash
-python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo alainkaiser/skills \
-  --path <skill-directory>
+npx skills add alainkaiser/skills --skill <skill-name>
 ```
 
-Example:
+For Codex, install globally and skip prompts:
 
 ```bash
-python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo alainkaiser/skills \
-  --path implement-figma-component
+npx skills add alainkaiser/skills --skill <skill-name> --global --agent codex --yes
 ```
 
 Restart Codex after installing a skill.
+
+## Skills
+
+- `implement-figma-component`
 
 ## Layout
 
