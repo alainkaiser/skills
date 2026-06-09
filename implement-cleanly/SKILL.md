@@ -1,6 +1,6 @@
 ---
 name: implement-cleanly
-description: Implement or refactor frontend or backend code in an existing codebase using the user's preferred coding style: simple, maintainable, domain-oriented, evidence-backed, and aligned with local architecture. Use for general feature work, bug fixes, C#/.NET Web API work, React/TypeScript work, API wiring, migrations, generated clients, and focused code cleanup when no more specific skill applies.
+description: "Implement or refactor frontend or backend code in an existing codebase using the user's preferred coding style: simple, maintainable, domain-oriented, evidence-backed, and aligned with local architecture. Use for general feature work, bug fixes, C#/.NET Web API work, React/TypeScript work, API wiring, migrations, generated clients, and focused code cleanup when no more specific skill applies."
 ---
 
 # Implement Cleanly
