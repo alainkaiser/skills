@@ -20,6 +20,7 @@ Restart Codex after installing a skill.
 
 ## Skills
 
+- `implement-cleanly`
 - `implement-figma-component`
 
 ## Layout
