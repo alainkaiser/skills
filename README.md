@@ -10,14 +10,6 @@ Install a specific skill from this repo:
 npx skills add alainkaiser/skills --skill <skill-name>
 ```
 
-For Codex, install globally and skip prompts:
-
-```bash
-npx skills add alainkaiser/skills --skill <skill-name> --global --agent codex --yes
-```
-
-Restart Codex after installing a skill.
-
 ## Skills
 
 - `implement-figma-component`
