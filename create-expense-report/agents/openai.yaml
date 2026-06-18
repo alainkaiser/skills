@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Expense Report"
+  short_description: "Build expense report PDFs"
+  default_prompt: "Use $create-expense-report to generate my next expense report from the receipts folder."

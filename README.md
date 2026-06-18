@@ -12,6 +12,7 @@ npx skills add alainkaiser/skills --skill <skill-name>
 
 ## Skills
 
+- `create-expense-report`
 - `implement-figma-component`
 
 ## Layout
