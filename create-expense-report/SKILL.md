@@ -54,7 +54,11 @@ Use relative `source_pdf` paths when practical.
 
 ## Generator
 
-The script is cross-platform Python 3.10+. It requires `openpyxl`, `pypdf`, and `reportlab`; if missing, it prints the portable install command.
+The script is cross-platform Python 3.10+. It requires current compatible releases of `openpyxl`, `pypdf`, and `reportlab`; install or refresh them with:
+
+```bash
+python -m pip install --upgrade openpyxl pypdf reportlab
+```
 
 ```bash
 python scripts/create_expense_report.py --manifest expense-manifest.json --out-dir .
