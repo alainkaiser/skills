@@ -47,7 +47,8 @@ Defaults:
 
 ## Currency
 
-- Use exact booked CHF card/bank amounts when provided.
+- Extract the original amount and currency from each readable receipt; do not ask the user to transcribe them.
+- Use exact booked CHF card/bank amounts when the user provides them or an explicit expense policy requires them. Do not request them by default.
 - Otherwise research current online exchange rates for every non-CHF currency before generating the report.
 - Prefer SNB current exchange rates for CHF pairs. If unavailable, use ECB euro reference rates as fallback/cross-rate source.
 - Do not use generic converter snippets, old report rates, or static examples.
