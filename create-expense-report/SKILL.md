@@ -13,7 +13,9 @@ Before generating a report, read `references/template-rules.md`. Use `scripts/cr
 
 When the user asks for guidance or has not supplied everything needed, guide them progressively:
 
-- Ask exactly one question or give exactly one next action per turn, then wait for the user's reply.
+- Continue automatically until a user decision is genuinely required. Inspection, extraction, tool calls, and progress updates do not consume a conversational step.
+- Ask at most one question per turn. After automated work finishes, ask the next required question in that same turn; never stop after only saying what you will do or what you found.
+- If no more user input is required, proceed to review or generation instead of asking the user to tell you to continue.
 - Keep each turn short and label the current phase when useful, for example `Step 1 — Receipts`. Do not preview the full checklist.
 - Do not present a multi-field intake form, ask the user to reply with several values, or list the eventual output files during intake.
 - Inspect the prompt, current workspace, and receipts before asking. Never ask for information already supplied or safely inferable.
@@ -23,6 +25,7 @@ When the user asks for guidance or has not supplied everything needed, guide the
 - Ask conditional questions only when they become relevant, such as private-car travel near the end.
 - Accept information the user volunteers early and skip the corresponding later questions.
 - If the user supplies all required inputs up front, proceed without adding artificial confirmation turns.
+- Interpret replies only in the context of the question asked. If a short reply is ambiguous, mistyped, or does not clearly match the offered choices, clarify it; never reinterpret it as a new report period or scope instruction.
 - Resolve uncertain receipt details one focused question at a time. For many uncertainties, use small review batches only if the user prefers a faster review.
 
 If no receipt folder is supplied and no receipt PDFs are available in the current workspace, the first response should contain only the first intake question, such as:
@@ -31,22 +34,39 @@ If no receipt folder is supplied and no receipt PDFs are available in the curren
 >
 > **Step 1 — Receipts:** Have you already collected copies of all receipts or invoices for this report into one folder? PDFs are preferred.
 
-Stop after the question. If the receipts are not ready, give the user the single next action of collecting copies in one folder and ask them to return when ready. If they are ready, ask only for the folder path.
+Stop after the question. If the receipts are not ready, give the user the single next action of collecting copies in one folder and ask them to return when ready. If they are ready, ask only for the folder path. Once the user supplies the path, inspect and extract the files immediately, then ask the next unanswered question in the same turn.
+
+## Receipt Scope
+
+- Treat every receipt/invoice PDF found in the selected folder as a candidate, excluding generated report outputs.
+- Show the candidate count and date span, then ask whether to include all of them. If the user agrees, lock the exact file set and do not ask a separate report-period question.
+- Never remove a locked receipt because of its date, folder name, billing period, or an inferred reporting month. Change the set only when the user explicitly includes or excludes files.
+- If the user wants a subset, present concrete choices derived from the actual files, such as date groups or filenames. Do not infer a subset from an ambiguous reply.
+- Record the locked relative paths as `confirmed_source_pdfs` in the manifest. Before generation, ensure the expense rows match that set exactly and show any exclusions explicitly.
+
+## Classification Choices
+
+Read `references/template-rules.md` before classifying rows.
+
+- Classify obvious receipts without asking. Show the assigned code and label in the review.
+- If a category is ambiguous, offer the 2–4 plausible valid categories with code and label, mark the recommended choice, and offer `Show all categories`. Never ask the user to invent an expense category from scratch.
+- Keep expense category and `Project` distinct. `Project` is a free-text client, product, team, purpose, or cost context rather than one of the `S100`–`S180` categories.
+- For a missing `Project`, reuse values found in the prompt or existing reports when appropriate. Otherwise offer 2–4 short suggestions derived from the receipts plus `Different value`; do not start with a blank open-ended question.
+- Format choices concretely, for example `S160 — Software & Licences (recommended)`, `S180 — Others`, or `Show all categories`; for project context, examples might be `Learning/training (suggested)`, `Internal tools`, or `Different value`.
 
 ## Workflow
 
 Treat each phase as a gate. Skip facts already known and questions that do not apply.
 
-1. Establish receipt readiness, then obtain the folder path. Ask the user to put only copies for this report period in that folder; prefer PDFs.
-2. Inspect the folder and existing reports to avoid duplicates; do not infer coverage from folder names alone. Report what was found before continuing.
-3. Extract each receipt/invoice: date, id, vendor, amount, currency, billing period, description, payment status, and source PDF.
-4. Ask for the report user name if it is still unknown.
-5. Confirm the report period only when receipt dates or folder contents leave the intended scope ambiguous.
-6. Classify rows using the template rules. Ask for project or cost context only where it cannot be inferred; do not assume every row has the same project.
+1. Establish receipt readiness, then obtain the folder path. Ask the user to put only copies for this report in that folder; prefer PDFs.
+2. Inspect the folder and existing reports to avoid duplicates, then extract each candidate receipt: date, id, vendor, amount, currency, billing period, description, payment status, and source PDF. Continue to the next question without waiting for a generic prompt to proceed.
+3. Ask for the report user name if it is still unknown.
+4. Confirm and lock the receipt scope. If all candidates are accepted, derive the date span from them and do not narrow it later.
+5. Classify rows using the template rules. When input is needed, present choices as described above. Ask for project or cost context only where it cannot be inferred; do not assume every row has the same project.
+6. Ask whether private-car trips must be included. If yes, collect one trip at a time: date, kilometers, start, destination, reason, and project.
 7. Convert non-CHF receipt amounts automatically using trusted online CHF exchange rates. Use an exact booked CHF card/bank amount only when the user has already supplied it or an explicit expense policy requires it.
-8. Ask whether private-car trips must be included. If yes, collect one trip at a time: date, kilometers, start, destination, reason, and project.
-9. Create a manifest and present a compact review. Resolve uncertainties progressively, then ask for final confirmation before generation.
-10. Run the generator and validate XLSX rows/formulas, PDF page count, first-page rendering, receipt order, total CHF, and FX notes.
+8. Create a manifest with `confirmed_source_pdfs` and present a compact review. Resolve uncertainties progressively, state included and excluded receipt counts, then ask for final confirmation before generation.
+9. Run the generator and validate the confirmed receipt set, XLSX rows/formulas, PDF page count, first-page rendering, receipt order, total CHF, and FX notes.
 
 ## Manifest Shape
 
@@ -55,6 +75,7 @@ Use relative `source_pdf` paths when practical.
 ```json
 {
   "report_user_name": "Jane Doe",
+  "confirmed_source_pdfs": ["receipt.pdf"],
   "expenses": [
     {
       "source_pdf": "receipt.pdf",
