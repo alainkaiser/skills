@@ -1,0 +1,4 @@
+interface:
+  display_name: "Restore Local Dev Stack"
+  short_description: "Diagnose and restore local development stacks"
+  default_prompt: "Use $restore-local-dev-stack to diagnose and restore this local development environment."
