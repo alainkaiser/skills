@@ -61,6 +61,7 @@ Defaults:
 Top-level:
 
 - `report_user_name`: required unless `--user-name` is passed.
+- `confirmed_source_pdfs`: exact user-confirmed receipt set, preferably relative paths; required for newly guided reports.
 - `expenses`: required list.
 - `car_trips`: optional list.
 
@@ -78,6 +79,8 @@ Car trip row:
 ## Checks
 
 - No duplicate receipts.
+- Every `confirmed_source_pdfs` entry appears in `expenses` exactly once, and no unconfirmed receipt appears.
+- Receipt dates or folder names never override the user-confirmed set.
 - Generated files excluded from inputs.
 - Every receipt PDF appended exactly once.
 - Workbook has no stale rows/helper text from older reports.

@@ -132,6 +132,39 @@ def normalize_expenses(manifest: dict[str, Any], manifest_dir: Path) -> list[dic
     return expenses
 
 
+def validate_receipt_scope(
+    manifest: dict[str, Any], manifest_dir: Path, expenses: list[dict[str, Any]]
+) -> None:
+    actual_paths = [Path(expense["source_pdf"]).resolve() for expense in expenses]
+    if len(actual_paths) != len(set(actual_paths)):
+        duplicates = sorted({str(path) for path in actual_paths if actual_paths.count(path) > 1})
+        raise ValueError(f"Duplicate source_pdf entries: {', '.join(duplicates)}.")
+
+    raw_confirmed = manifest.get("confirmed_source_pdfs")
+    if raw_confirmed is None:
+        return
+    if not isinstance(raw_confirmed, list) or not raw_confirmed:
+        raise ValueError("'confirmed_source_pdfs' must be a non-empty list when provided.")
+    if any(not isinstance(value, str) or not value.strip() for value in raw_confirmed):
+        raise ValueError("Every confirmed_source_pdfs entry must be a non-empty path string.")
+
+    confirmed_paths = [resolve_path(value, manifest_dir).resolve() for value in raw_confirmed]
+    if len(confirmed_paths) != len(set(confirmed_paths)):
+        raise ValueError("'confirmed_source_pdfs' must not contain duplicate paths.")
+
+    confirmed_set = set(confirmed_paths)
+    actual_set = set(actual_paths)
+    missing = [str(path) for path in confirmed_paths if path not in actual_set]
+    unexpected = [str(path) for path in actual_paths if path not in confirmed_set]
+    if missing or unexpected:
+        details = []
+        if missing:
+            details.append(f"missing expense rows for: {', '.join(missing)}")
+        if unexpected:
+            details.append(f"unconfirmed expense rows for: {', '.join(unexpected)}")
+        raise ValueError(f"Expenses do not match confirmed_source_pdfs ({'; '.join(details)}).")
+
+
 def normalize_car_trips(manifest: dict[str, Any]) -> list[dict[str, Any]]:
     raw_trips = manifest.get("car_trips") or []
     if not isinstance(raw_trips, list):
@@ -405,6 +438,7 @@ def main() -> None:
 
     manifest = load_manifest(manifest_path)
     expenses = normalize_expenses(manifest, manifest_path.parent)
+    validate_receipt_scope(manifest, manifest_path.parent, expenses)
     car_trips = normalize_car_trips(manifest)
 
     workbook_path = out_dir / clean_output_filename(args.workbook_name, ".xlsx")
