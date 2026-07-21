@@ -1,0 +1,4 @@
+interface:
+  display_name: "Simplify .NET Abstractions"
+  short_description: "Review and simplify over-abstracted .NET code"
+  default_prompt: "Use $simplify-dotnet-abstractions to review this .NET code for unnecessary indirection and simplify it without changing behavior."
