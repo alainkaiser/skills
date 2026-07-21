@@ -98,7 +98,7 @@ Treat Clean Architecture as dependency direction first, not a required project c
 - independent deployment, ownership, or release cadence;
 - infrastructure implementations that actually vary.
 
-For a modest application, start by considering one production assembly plus tests, feature-oriented folders, and `internal` types. Remember that `internal` enforces assembly visibility only; folders and namespaces do not enforce dependency direction. Use project references or architecture tests when strict direction must be machine-enforced.
+For a modest application, start by considering one production assembly plus tests, feature-oriented folders, and `internal` types. Remember that `internal` normally restricts access to the declaring assembly, but `InternalsVisibleTo` can expose internals to named friend assemblies; folders and namespaces do not enforce dependency direction. Use project references or architecture tests when strict direction must be machine-enforced.
 
 Question one-project-per-layer templates, duplicate contracts between adjacent internal projects, and mappings created only because a template prescribes a boundary. Preserve separate projects that carry a real consumer, policy, ownership, or deployment constraint.
 
@@ -123,6 +123,7 @@ Keep a domain-specific wrapper when it translates vocabulary, enforces policy, n
 - [CQRS pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs): document benefits, complexity, and cases where CRUD is sufficient.
 - [Common web application architectures](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures): distinguish a simple all-in-one application, logical layers, physical projects, and inward dependencies.
 - [`internal` keyword](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/internal): define assembly-level accessibility and its limits.
+- [Friend assemblies](https://learn.microsoft.com/en-us/dotnet/standard/assembly/friend): document how `InternalsVisibleTo` exposes internal types and members to named assemblies.
 - [Dates, times, and time zones](https://learn.microsoft.com/en-us/dotnet/standard/datetime/): identify `TimeProvider` as the built-in testable time abstraction.
 - [.NET logging and tracing](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/logging-tracing): identify `ILogger` as the general-purpose structured logging abstraction.
 - [Options pattern](https://learn.microsoft.com/en-us/dotnet/core/extensions/options): cover grouped, strongly typed, and validated configuration.

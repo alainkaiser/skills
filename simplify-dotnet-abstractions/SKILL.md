@@ -21,7 +21,7 @@ After identifying the candidate types, read only the relevant pattern sections i
 
 For every candidate, search beyond its declaration:
 
-1. Find all consumers, implementations, inheritance, extension methods, tests, mocks, and documentation.
+1. Find all consumers, implementations, inheritance, extension methods, tests, mocks, `InternalsVisibleTo` friend-assembly access, and documentation.
 2. Trace DI registrations, keyed or collection registrations, decorators, factories, lifetimes, assembly scanning, and runtime selection.
 3. Trace the end-to-end call path and note where validation, authorization, transactions, mapping, retries, caching, telemetry, and domain rules actually occur.
 4. Check project and package boundaries, public API exposure, multiple hosts, plugins, and dynamic loading.
