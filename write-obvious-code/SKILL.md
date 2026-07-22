@@ -1,6 +1,6 @@
 ---
 name: write-obvious-code
-description: "Write and refactor code for local comprehensibility through explicit control flow, meaningful names, visible state and side effects, and only justified indirection. Use when Codex is asked for simple, readable, maintainable, junior-friendly, unsurprising, non-clever, or non-over-engineered code; to clarify dense expressions, nested conditions, opaque chains, premature generic helpers, or fragmented pass-through functions; or when clarity is preferred over brevity. Apply across languages as a readability lens alongside framework-specific guidance. Do not use for formatting-only work, broad architecture review, or unmeasured performance work."
+description: "Write and refactor code for local comprehensibility through explicit control flow, meaningful names, visible state and side effects, and only justified indirection. Use when Codex is asked for simple, readable, maintainable, junior-friendly, unsurprising, non-clever, or non-over-engineered code; to clarify dense expressions, nested conditions, opaque chains, premature generic helpers, or fragmented pass-through functions; or when clarity is preferred over brevity. Apply across languages as a readability lens and use framework-specific guidance when available. Do not use for formatting-only work, broad architecture review, or unmeasured performance work."
 ---
 
 # Write Obvious Code
@@ -14,7 +14,7 @@ Optimize for the time a teammate needs to understand and safely change the code,
 - Keep the change within the requested flow or diff. Do not clean up adjacent code.
 - Preserve behavior outside the requested change, including public contracts, validation, authorization, transactions, errors, ordering, async and cancellation flow, lifetimes, and side effects.
 - Treat established idioms as readable unless the concrete use obscures behavior.
-- For targeted .NET abstraction decisions, use `simplify-dotnet-abstractions`; apply this skill only as the readability lens.
+- For targeted .NET abstraction decisions, use `simplify-dotnet-abstractions` when available. Otherwise, limit this skill to readability and do not remove abstractions without repository evidence.
 
 ## Clarify With Evidence
 
