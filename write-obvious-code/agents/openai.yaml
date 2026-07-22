@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Obvious Code"
+  short_description: "Favor readable, explicit, maintainable code"
+  default_prompt: "Use $write-obvious-code to implement this in a simple, explicit, junior-readable way."
