@@ -1,9 +1,9 @@
 {
-  "report_user_name": "Jane Doe",
-  "confirmed_source_pdfs": ["receipt.pdf"],
+  "report_user_name": "<report_user_name>",
+  "confirmed_source_pdfs": ["<receipt>.pdf"],
   "expenses": [
     {
-      "source_pdf": "receipt.pdf",
+      "source_pdf": "<receipt>.pdf",
       "expense_type": "S160",
       "original_amount": 100.00,
       "original_currency": "USD",
