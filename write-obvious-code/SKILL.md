@@ -1,6 +1,6 @@
 ---
 name: write-obvious-code
-description: "Write and refactor code for local comprehensibility through explicit control flow, meaningful names, visible state and side effects, and only justified indirection. Use when Codex is asked for simple, readable, maintainable, junior-friendly, unsurprising, non-clever, or non-over-engineered code; to clarify dense expressions, nested conditions, opaque chains, premature generic helpers, or fragmented pass-through functions; or when clarity is preferred over brevity. Apply across languages as a readability lens and use framework-specific guidance when available. Do not use for formatting-only work, broad architecture review, or unmeasured performance work."
+description: "Write and refactor code for local comprehensibility through explicit control flow, meaningful names, visible state and side effects, and only justified indirection. Use when asked for simple, readable, maintainable, junior-friendly, unsurprising, non-clever, or non-over-engineered code; to clarify dense expressions, nested conditions, opaque chains, premature generic helpers, or fragmented pass-through functions; or when clarity is preferred over brevity. Apply across languages as a readability lens and use framework-specific guidance when available. Don't use for formatting-only work, broad architecture review, or unmeasured performance work."
 ---
 
 # Write Obvious Code
@@ -43,3 +43,10 @@ Keep a short expression or familiar pipeline when it is already obvious. Use ver
 For reviews, report only concrete reading costs, the simpler shape, and behavior risk. Distinguish repository-rule violations from judgment calls.
 
 For implementations, summarize the clearer implementation or path, preserved behavior outside the request, verification results, and skipped checks or residual risk.
+
+## Error Handling
+
+* If the request is review-only, report concrete reading costs without editing files.
+* If repository checks fail after a readability change, restore behavior first, then retry a smaller clarification.
+* If removing indirection would cross into .NET abstraction-collapse territory, hand off to `simplify-dotnet-abstractions` when available; otherwise keep the seam and limit changes to naming and control-flow clarity.
+* If public contracts, ordering, async flow, or side effects cannot be preserved with confidence, stop and report the residual risk instead of guessing.

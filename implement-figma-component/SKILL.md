@@ -1,15 +1,15 @@
 ---
 name: implement-figma-component
-description: Implement or refine UI components from Figma designs in an existing frontend codebase, validated in the browser against the real design. Use when the user provides a figma.com link or node, asks for a component to match a design, asks for pixel-perfect or design-to-code work, asks to evaluate a component or library as a base instead of building from scratch, asks for visual iteration, or asks for browser screenshot validation of spacing, sizing, typography, colors, states, and interactions. Not for creating or editing designs inside Figma (code-to-design).
+description: "Implement or refine UI components from Figma designs in an existing frontend codebase, validated in the browser against the real design. Use when the user provides a figma.com link or node, asks for a component to match a design, asks for pixel-perfect or design-to-code work, asks to evaluate a component or library as a base instead of building from scratch, asks for visual iteration, or asks for browser screenshot validation of spacing, sizing, typography, colors, states, and interactions. Don't use for creating or editing designs inside Figma (code-to-design)."
 ---
 
 # Implement Figma Component
 
 Turn Figma component designs into production code that fits the current codebase and is proven against the real design with browser evidence. The global defaults (read-before-write, match local conventions, surgical edits, verify-against-goal) and the React standards already apply; this skill adds only the Figma-specific tradecraft.
 
-Confirm up front that you have a Figma node/link, know which component to build, and know where it lives in the repo. If any is missing, ask before proceeding.
+Confirm up front that a Figma node or link is available, which component to build is known, and where it lives in the repo is known. If any is missing, ask before proceeding.
 
-Copy this checklist and check off steps as you complete them:
+Copy `assets/progress-checklist.md` and check off steps as work completes:
 
 ```
 Figma Implementation Progress:
@@ -30,7 +30,7 @@ Fetch with the available Figma tools — never implement from the URL alone or f
 - `get_design_context` (or equivalent) first: reference code, screenshot, and hints for the node.
 - `get_screenshot` for the node: this is the visual baseline for all later comparison.
 - `get_metadata` for exact dimensions, spacing, and typography — and whenever the design context is too large or truncated: read the node map, then fetch the needed child nodes individually with `get_design_context`.
-- `get_variable_defs` when you need the tokens (color, spacing, typography) used in the selection.
+- `get_variable_defs` when tokens (color, spacing, typography) used in the selection are required.
 
 Honor the design-context hints in this priority order:
 
@@ -90,3 +90,11 @@ State the base component/library chosen and why, attach the browser screenshots,
 
 - Keep iterating within the current turn until visual and behavioral evidence says the component is done or a concrete blocker remains.
 - If Figma or Jira access is blocked, continue from available local evidence only when the risk is low; otherwise ask for the missing artifact or a screenshot.
+
+## Error Handling
+
+* If Figma authentication or tool access is blocked, ask for a screenshot or exported specs; do not implement from the URL alone.
+* If design context is truncated, read metadata and fetch child nodes individually; do not guess at missing structure.
+* If browser automation is unavailable, run static checks and report that visual parity remains unverified.
+* If no suitable local or installed base exists, state that tradeoff and proceed with the smallest custom wrapper rather than inventing a new design system.
+* If a visual difference remains after repeated fixes, document it as an intentional token, accessibility, or platform constraint instead of claiming a perfect match.

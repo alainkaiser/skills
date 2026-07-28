@@ -1,6 +1,6 @@
 ---
 name: simplify-dotnet-abstractions
-description: "Review and simplify unnecessary indirection in existing C# and .NET code while preserving real architectural boundaries and behavior. Use when Codex is asked to assess over-abstraction or over-engineering; justify, narrow, or remove interfaces, repositories, units of work, service or provider layers, factories, handlers, mediators, strategies, generic base classes, redundant DTO or mapping chains, Clean Architecture projects, or dependency-injection ceremony; flatten pass-through code; or decide whether a .NET abstraction earns its cost. Support review-only analysis and authorized behavior-preserving refactoring in concrete repositories. Do not use for generic style cleanup, speculative greenfield architecture, or performance tuning without measurements."
+description: "Review and simplify unnecessary indirection in existing C# and .NET code while preserving real architectural boundaries and behavior. Use when asked to assess over-abstraction or over-engineering; justify, narrow, or remove interfaces, repositories, units of work, service or provider layers, factories, handlers, mediators, strategies, generic base classes, redundant DTO or mapping chains, Clean Architecture projects, or dependency-injection ceremony; flatten pass-through code; or decide whether a .NET abstraction earns its cost. Support review-only analysis and authorized behavior-preserving refactoring in concrete repositories. Don't use for generic style cleanup, speculative greenfield architecture, or performance tuning without measurements."
 ---
 
 # Simplify .NET Abstractions
@@ -94,3 +94,11 @@ Lead with the outcome and scope. For non-trivial reviews, report:
 | --- | --- | --- | --- | --- |
 
 Include justified abstractions when they answer the user’s question; explain why they stay. For implemented changes, summarize the collapsed path, preserved boundary, changed files, verification commands, and results.
+
+## Error Handling
+
+* If reflection, source-generated registration, plugins, or dynamic loading cannot be fully resolved, assign **Investigate** and stop short of collapsing that boundary.
+* If a candidate is a published or externally consumed contract, preserve compatibility or propose an explicit migration; do not silently break callers.
+* If tests, build, or analyzers fail after a collapse, revert or restore the last seam and reassess with new evidence before continuing.
+* If lifetime, transaction, or authorization ownership is unclear after tracing, keep or narrow rather than collapse.
+* If the request is review-only and an edit was implied by findings, report recommendations without changing files.
