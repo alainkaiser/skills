@@ -1,25 +1,25 @@
 ---
 name: create-expense-report
-description: "Create expense reports from receipt PDFs and invoices, including step-by-step employee guidance when inputs are missing. Use when the user asks to prepare, update, validate, or generate an expense report, expense-report workbook, combined receipt PDF, or monthly/periodic expenses package from a user-provided receipts folder. Covers progressive intake, receipt extraction, category/project mapping, online exchange-rate research and traceability, editable XLSX generation, and final PDF generation with the template layout."
+description: "Create expense reports from receipt PDFs and invoices, including step-by-step employee guidance when inputs are missing. Use when the user asks to prepare, update, validate, or generate an expense report, expense-report workbook, combined receipt PDF, or monthly/periodic expenses package from a user-provided receipts folder. Covers progressive intake, receipt extraction, category/project mapping, online exchange-rate research and traceability, editable XLSX generation, and final PDF generation with the template layout. Don't use for tax advice, payroll, accounting close, or expense workflows that do not start from receipt or invoice PDFs."
 ---
 
 # Create Expense Report
 
 Generate an editable `Expense Report Guide.xlsx` and final `expense report <report_user_name>.pdf` from receipt PDFs. Do not rely on any local template file, local user path, OS-specific command, or baked-in person name.
 
-Before generating a report, read `references/template-rules.md`. Use `scripts/create_expense_report.py` after receipt rows are extracted and reviewed.
+Before generating a report, read `references/template-rules.md`. Copy the structure from `assets/manifest.template.json` when building the manifest. Use `scripts/create_expense_report.py` after receipt rows are extracted and reviewed.
 
 ## Guided Intake
 
 When the user asks for guidance or has not supplied everything needed, guide them progressively:
 
 - Continue automatically until a user decision is genuinely required. Inspection, extraction, tool calls, and progress updates do not consume a conversational step.
-- Ask at most one question per turn. After automated work finishes, ask the next required question in that same turn; never stop after only saying what you will do or what you found.
-- If no more user input is required, proceed to review or generation instead of asking the user to tell you to continue.
+- Ask at most one question per turn. After automated work finishes, ask the next required question in that same turn; never stop after only announcing planned work or findings.
+- If no more user input is required, proceed to review or generation instead of asking the user to request continuation.
 - Keep each turn short and label the current phase when useful, for example `Step 1 — Receipts`. Do not preview the full checklist.
 - Do not present a multi-field intake form, ask the user to reply with several values, or list the eventual output files during intake.
 - Inspect the prompt, current workspace, and receipts before asking. Never ask for information already supplied or safely inferable.
-- Extract legible receipt values yourself, including the date, vendor, total amount, and currency. Never ask the user to transcribe them.
+- Extract legible receipt values, including the date, vendor, total amount, and currency. Never ask the user to transcribe them.
 - If a receipt value is uncertain, try another extraction or rendering pass first. If it remains unreadable, ask for a clearer receipt copy; do not ask the user to transcribe individual values.
 - For non-CHF receipts, research the CHF exchange rate automatically. Do not ask for permission or request the exact booked CHF amount by default.
 - Ask conditional questions only when they become relevant, such as private-car travel near the end.
@@ -65,33 +65,8 @@ Treat each phase as a gate. Skip facts already known and questions that do not a
 5. Classify rows using the template rules. When input is needed, present choices as described above. Ask for project or cost context only where it cannot be inferred; do not assume every row has the same project.
 6. Ask whether private-car trips must be included. If yes, collect one trip at a time: date, kilometers, start, destination, reason, and project.
 7. Convert non-CHF receipt amounts automatically using trusted online CHF exchange rates. Use an exact booked CHF card/bank amount only when the user has already supplied it or an explicit expense policy requires it.
-8. Create a manifest with `confirmed_source_pdfs` and present a compact review. Resolve uncertainties progressively, state included and excluded receipt counts, then ask for final confirmation before generation.
+8. Create a manifest from `assets/manifest.template.json` with `confirmed_source_pdfs` and present a compact review. Resolve uncertainties progressively, state included and excluded receipt counts, then ask for final confirmation before generation.
 9. Run the generator and validate the confirmed receipt set, XLSX rows/formulas, PDF page count, first-page rendering, receipt order, total CHF, and FX notes.
-
-## Manifest Shape
-
-Use relative `source_pdf` paths when practical.
-
-```json
-{
-  "report_user_name": "Jane Doe",
-  "confirmed_source_pdfs": ["receipt.pdf"],
-  "expenses": [
-    {
-      "source_pdf": "receipt.pdf",
-      "expense_type": "S160",
-      "original_amount": 100.00,
-      "original_currency": "USD",
-      "amount_chf": 0.00,
-      "currency": "CHF",
-      "rate_note": "USD/CHF <rate> from <source URL>, published <date>, retrieved <date>, calculation: <formula>",
-      "reason": "Vendor subscription <period>",
-      "project": "project-or-cost-context"
-    }
-  ],
-  "car_trips": []
-}
-```
 
 ## Generator
 
@@ -109,3 +84,11 @@ Default outputs:
 
 - `Expense Report Guide.xlsx`
 - `expense report <report_user_name>.pdf`
+
+## Error Handling
+
+* If `scripts/create_expense_report.py` exits with a missing-package error, install or upgrade `openpyxl`, `pypdf`, and `reportlab`, then re-run the generator.
+* If a receipt PDF is unreadable after a second extraction or rendering pass, ask for a clearer copy; do not invent amounts, dates, or vendors.
+* If online FX lookup fails, retry once with another trusted rate source. If it still fails, report the blocked currency conversion and ask only for the booked CHF amount or permission to pause that row.
+* If generated XLSX rows, PDF page count, receipt order, or `confirmed_source_pdfs` do not match the locked set, stop and reconcile the manifest before regenerating.
+* If the receipts folder path is invalid or empty, ask only for a corrected path; do not scan unrelated directories.

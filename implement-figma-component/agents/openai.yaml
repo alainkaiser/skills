@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implement Figma Component"
+  short_description: "Build UI from Figma with browser validation"
+  default_prompt: "Use $implement-figma-component to implement this Figma component in the codebase and validate visual parity in the browser."

@@ -1,6 +1,6 @@
 ---
 name: restore-local-dev-stack
-description: "Restore and verify local development environments on macOS across single- or multi-repository .NET, Node/React, Expo/React Native, Docker, Xcode, and physical-device workflows. Use when a project previously worked but no longer starts, the user asks whether a machine is ready, multiple local services must be brought up, or failures may involve PATH or SDK selection, ports, launch profiles, environment wiring, containers, listeners, health endpoints, localhost versus LAN access, permissions, simulator or physical-device reachability, or differences between the user's shell and the agent execution context."
+description: "Restore and verify local development environments on macOS across single- or multi-repository .NET, Node/React, Expo/React Native, Docker, Xcode, and physical-device workflows. Use when a project previously worked but no longer starts, the user asks whether a machine is ready, multiple local services must be brought up, or failures may involve PATH or SDK selection, ports, launch profiles, environment wiring, containers, listeners, health endpoints, localhost versus LAN access, permissions, simulator or physical-device reachability, or differences between the user's shell and the agent execution context. Don't use for greenfield project setup, production or cloud deployments, CI-only failures without a local reproduction, or speculative reinstalls when the stack already starts."
 ---
 
 # Restore Local Dev Stack
@@ -72,3 +72,11 @@ Report:
 - the minimal change made;
 - the decisive commands or actions and their results;
 - any skipped real-device, permission, external-service, or sandbox-dependent verification and its residual risk.
+
+## Error Handling
+
+* If a check fails in the agent sandbox but may succeed in the user's shell, re-run the same probe outside the sandbox or report the execution-context difference before changing configuration.
+* If a port is occupied, identify the owning process before terminating or rebinding; ask before stopping a process that may belong to unrelated work.
+* If a required secret or environment key is missing, report only presence and the non-sensitive endpoint or port it selects; ask the user to supply the value rather than inventing one.
+* If simulator or physical-device reachability cannot be tested from the current session, record the skipped target-route check and residual risk instead of claiming end-to-end success.
+* If the same unexplained failure repeats after one variable change, gather new evidence and revise the hypothesis; do not loop the same action.
