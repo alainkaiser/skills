@@ -1,0 +1,4 @@
+interface:
+  display_name: "Base UI"
+  short_description: "Build React UIs with Base UI"
+  default_prompt: "Use $base-ui to implement this UI with @base-ui/react against the current official docs."
