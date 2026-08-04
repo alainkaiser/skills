@@ -13,6 +13,7 @@ npx skills add alainkaiser/skills --skill <skill-name>
 ## Skills
 
 - `create-expense-report`
+- `eclipse`
 - `implement-figma-component`
 - `restore-local-dev-stack`
 - `simplify-dotnet-abstractions`

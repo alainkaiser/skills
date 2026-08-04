@@ -1,0 +1,4 @@
+interface:
+  display_name: "Eclipse"
+  short_description: "Orchestrate Sol and Luna repository work"
+  default_prompt: "Use $eclipse to orchestrate this repository task with Sol and Luna."
