@@ -12,6 +12,7 @@ npx skills add alainkaiser/skills --skill <skill-name>
 
 ## Skills
 
+- `base-ui`
 - `create-expense-report`
 - `eclipse`
 - `implement-figma-component`
