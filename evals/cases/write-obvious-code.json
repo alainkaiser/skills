@@ -1,0 +1,143 @@
+{
+  "skill": "write-obvious-code",
+  "cases": [
+    {
+      "id": "explicit-readability-review",
+      "description": "Explicit readability invocation routes correctly",
+      "kind": "routing",
+      "routingClass": "explicit",
+      "shouldTrigger": true,
+      "prompt": "Use $write-obvious-code to review src/pricing.ts for local comprehensibility. Review only; do not edit.",
+      "expectation": {
+        "required": ["pricing.ts"],
+        "anyOf": [["nested ternary", "nested expression", "distant context", "reading cost", "conditional expression", "policy branches"], ["control flow", "intermediate", "direct branches", "named subtotal", "subtotal"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Name the concrete reading cost and recommend the smallest clearer shape without editing."
+    },
+    {
+      "id": "implicit-junior-friendly",
+      "description": "Junior-friendly code request triggers implicitly",
+      "kind": "routing",
+      "routingClass": "implicit",
+      "shouldTrigger": true,
+      "prompt": "Make the pricing logic easy for a junior developer to follow, with visible decisions and no clever compression. For now, explain the change only.",
+      "expectation": {
+        "required": ["pricing"],
+        "anyOf": [["intermediate", "if", "explicit"], ["subtotal", "discount"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Prefer meaningful values and visible branches while avoiding gratuitous helpers or narrated comments."
+    },
+    {
+      "id": "contextual-maintenance-request",
+      "description": "Maintenance context still invokes readability lens",
+      "kind": "routing",
+      "routingClass": "contextual",
+      "shouldTrigger": true,
+      "prompt": "Before next week's handoff, simplify the dense expression in src/pricing.ts so a teammate can change discounts safely. Review only in this eval.",
+      "expectation": {
+        "required": ["discount", "behavior"],
+        "anyOf": [["nested", "branch", "intermediate"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Keep scope on the discount flow and preserve behavior while explaining a clearer implementation."
+    },
+    {
+      "id": "negative-formatting-only",
+      "description": "Formatting-only request does not activate readability refactoring",
+      "kind": "routing",
+      "routingClass": "negative",
+      "shouldTrigger": false,
+      "prompt": "Run the repository formatter on src/statuses.ts without changing logic or discussing design. In this eval, only state the command you would use.",
+      "expectation": {
+        "forbidden": ["refactor", "extract", "reading cost"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "A formatting-only task should not expand into code-clarity redesign."
+    },
+    {
+      "id": "refactor-dense-pricing",
+      "description": "Dense pricing logic is refactored into visible decisions",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Refactor only src/pricing.ts for obvious control flow. Preserve the current active-customer, premium, and bulk-discount behavior. Do not touch other files.",
+      "sandboxMode": "workspace-write",
+      "expectation": {
+        "required": ["preserve", "pricing.ts"],
+        "anyOf": [["subtotal", "discount"], ["explicit", "control flow"]],
+        "files": {
+          "contains": { "src/pricing.ts": ["if", "subtotal"] },
+          "notContains": { "src/pricing.ts": ["?"] }
+        }
+      },
+      "rubric": "The file should expose inactive, subtotal, premium, and bulk decisions directly without changing behavior or creating extra layers."
+    },
+    {
+      "id": "review-only-reading-cost",
+      "description": "Review-only mode reports concrete reading cost without edits",
+      "kind": "outcome",
+      "routingClass": "explicit",
+      "prompt": "Review src/pricing.ts only. Name the concrete reading cost, the smallest clearer shape, and the behavior risk. Do not edit.",
+      "expectation": {
+        "required": ["reading", "behavior"],
+        "anyOf": [["nested ternary", "distant context", "branch"]],
+        "forbidden": ["I changed", "implemented"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "A useful review identifies the exact decoding burden and a scoped alternative while preserving the workspace."
+    },
+    {
+      "id": "keep-obvious-pipeline",
+      "description": "Already-obvious idiomatic code is left alone",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Review src/statuses.ts for obviousness. Should its familiar filter/map pipeline be expanded? Do not edit.",
+      "expectation": {
+        "anyOf": [["keep", "already obvious", "familiar"]],
+        "forbidden": ["must replace", "for loop is required"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Keep the short familiar pipeline because it already communicates the transformation clearly."
+    },
+    {
+      "id": "preserve-external-boundary",
+      "description": "Readable external boundary is not collapsed casually",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Review src/payment-client.ts for readability. Should PaymentGateway be removed merely to reduce indirection? No edits.",
+      "expectation": {
+        "required": ["PaymentGateway"],
+        "anyOf": [["external", "boundary", "policy"], ["evidence", "preserve"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Avoid turning a readability review into unsupported architecture collapse; preserve a plausible external seam pending evidence."
+    },
+    {
+      "id": "dotnet-handoff-boundary",
+      "description": "Targeted .NET abstraction decisions route to the companion skill",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "A separate C# repository asks whether to delete an interface-service pair. State the boundary of this readability skill when simplify-dotnet-abstractions is available. Do not edit this fixture.",
+      "expectation": {
+        "required": ["simplify-dotnet-abstractions"],
+        "anyOf": [["handoff", "use", "targeted"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Route the abstraction verdict to the focused .NET skill; without it, keep the seam and limit work to readability."
+    },
+    {
+      "id": "preserve-async-order",
+      "description": "Readability does not reorder async side effects",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Review src/process-order.ts. A teammate wants Promise.all for brevity. Explain whether that preserves behavior. No edits.",
+      "expectation": {
+        "required": ["order", "side effect"],
+        "anyOf": [["sequential", "reserve", "charge", "confirmation"], ["Promise.all", "parallel"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Keep the visible sequential lifecycle because parallel execution would change ordering and side effects without evidence."
+    }
+  ]
+}

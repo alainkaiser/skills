@@ -1,0 +1,148 @@
+{
+  "skill": "create-expense-report",
+  "cases": [
+    {
+      "id": "explicit-report-request",
+      "description": "Explicit expense-report invocation routes correctly",
+      "kind": "routing",
+      "routingClass": "explicit",
+      "shouldTrigger": true,
+      "prompt": "Use $create-expense-report to guide me through preparing an expense report. I have not supplied a receipts folder yet. Do not create files in this eval.",
+      "expectation": {
+        "required": ["Step 1", "receipts"],
+        "minQuestions": 1,
+        "maxQuestions": 1,
+        "files": { "noChanges": true }
+      },
+      "rubric": "The first response should ask one short receipt-readiness question and not dump the full intake."
+    },
+    {
+      "id": "implicit-monthly-package",
+      "description": "Natural monthly receipts-package request triggers implicitly",
+      "kind": "routing",
+      "routingClass": "implicit",
+      "shouldTrigger": true,
+      "prompt": "Please turn my receipt PDFs into the editable expense workbook and combined final PDF. Start by telling me only what you need first; do not create files yet.",
+      "expectation": {
+        "required": ["receipts"],
+        "minQuestions": 1,
+        "maxQuestions": 1,
+        "files": { "noChanges": true }
+      },
+      "rubric": "The agent should use progressive intake and ask at most one first question."
+    },
+    {
+      "id": "contextual-conference-expenses",
+      "description": "Conference context still routes to receipt-driven workflow",
+      "kind": "routing",
+      "routingClass": "contextual",
+      "shouldTrigger": true,
+      "prompt": "I need a reimbursement package after a developer conference. The receipts are the source of truth. Explain the first workflow gate only and do not edit files.",
+      "expectation": {
+        "required": ["receipt"],
+        "maxQuestions": 1,
+        "files": { "noChanges": true }
+      },
+      "rubric": "The response should recognize a receipt-based expense report despite unrelated conference context."
+    },
+    {
+      "id": "negative-tax-advice",
+      "description": "Tax deductibility advice stays outside the expense-report skill",
+      "kind": "routing",
+      "routingClass": "negative",
+      "shouldTrigger": false,
+      "prompt": "Are home-office purchases tax deductible in Switzerland? Give general information only; do not prepare a report.",
+      "expectation": {
+        "forbidden": ["Expense Report Guide.xlsx", "confirmed_source_pdfs"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The answer should remain general tax information and not begin the report workflow."
+    },
+    {
+      "id": "guided-first-question",
+      "description": "Missing inputs produce one gated question",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Help me make an expense report. Pretend no receipt folder is available in the workspace. Ask only the next required question and do not create files.",
+      "expectation": {
+        "required": ["receipts"],
+        "forbidden": ["report user name", "private-car", "private car", "project code"],
+        "minQuestions": 1,
+        "maxQuestions": 1,
+        "files": { "noChanges": true }
+      },
+      "rubric": "Only the first receipt-readiness question is appropriate; no multi-field form or future checklist."
+    },
+    {
+      "id": "lock-confirmed-scope",
+      "description": "Accepted receipt set stays locked across dates",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "The candidate list is in context/receipt-index.md. I already confirmed that all three receipts are included, despite spanning December through February. State the manifest scope and next gate. Do not generate files.",
+      "expectation": {
+        "required": ["three", "confirmed_source_pdfs"],
+        "anyOf": [["locked", "exact file set"], ["do not narrow", "all three"]],
+        "maxQuestions": 1,
+        "files": { "noChanges": true }
+      },
+      "rubric": "The exact three-file set must remain locked; dates must not silently narrow scope."
+    },
+    {
+      "id": "ambiguous-category-choices",
+      "description": "Ambiguous expense category offers bounded valid choices",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "The Restaurant Central receipt is readable, but its business purpose is ambiguous. Show the single next classification question. Do not create files.",
+      "expectation": {
+        "required": ["S120", "S130"],
+        "anyOf": [["recommended", "recommend"]],
+        "minQuestions": 1,
+        "maxQuestions": 1,
+        "files": { "noChanges": true }
+      },
+      "rubric": "Offer 2-4 concrete valid category choices with codes and a recommendation, in one question."
+    },
+    {
+      "id": "automatic-fx-research",
+      "description": "Non-CHF receipt uses automatic traceable FX lookup",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "For the readable USD DevTools Cloud receipt, explain how the CHF amount will be obtained and recorded. Do not perform the lookup or generate files in this offline eval.",
+      "expectation": {
+        "required": ["USD", "CHF", "rate_note"],
+        "anyOf": [["SNB", "ECB"], ["publication date", "retrieval date"], ["automatically", "without asking"]],
+        "maxQuestions": 0,
+        "files": { "noChanges": true }
+      },
+      "rubric": "The agent should plan automatic trusted FX research and a traceable rate note without routinely asking for booked CHF."
+    },
+    {
+      "id": "unreadable-receipt-boundary",
+      "description": "Unreadable values are not invented or transcribed by the user",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Read context/unreadable-receipt.md and state the next action for that receipt. Do not create files.",
+      "expectation": {
+        "required": ["clearer"],
+        "anyOf": [["do not transcribe", "not invent", "cannot infer"]],
+        "minQuestions": 1,
+        "maxQuestions": 1,
+        "files": { "noChanges": true }
+      },
+      "rubric": "After two failed extraction/rendering passes, ask for a clearer copy rather than a transcription or invented value."
+    },
+    {
+      "id": "final-validation-gates",
+      "description": "Final report validation covers artifacts and locked scope",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "List the decisive checks required after generating an expense workbook and combined PDF from a confirmed receipt set. Review only.",
+      "expectation": {
+        "required": ["confirmed_source_pdfs", "XLSX", "PDF", "receipt order", "total CHF"],
+        "anyOf": [["first-page", "first page"], ["page count", "appended exactly once"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The checks should cover exact receipt scope, workbook formulas/rows, PDF order/page count/rendering, totals, and FX notes."
+    }
+  ]
+}

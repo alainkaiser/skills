@@ -1,0 +1,150 @@
+{
+  "skill": "base-ui",
+  "cases": [
+    {
+      "id": "explicit-dialog-review",
+      "description": "Explicit invocation routes to Base UI",
+      "kind": "routing",
+      "routingClass": "explicit",
+      "shouldTrigger": true,
+      "prompt": "Use $base-ui to review src/account-menu.tsx against the installed package and current official Base UI docs. Do not edit files.",
+      "networkAccess": true,
+      "expectation": {
+        "required": ["1.0.0", "official"],
+        "anyOf": [["llms.txt", "base-ui.com"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Reward a concise review grounded in the installed Base UI version and current official documentation, with no edits."
+    },
+    {
+      "id": "implicit-menu-debug",
+      "description": "Natural Base UI menu debugging request triggers implicitly",
+      "kind": "routing",
+      "routingClass": "implicit",
+      "shouldTrigger": true,
+      "prompt": "Our @base-ui/react Menu popup is clipped and its highlighted item styling seems unreliable. Inspect this fixture and explain the first evidence you would check. Do not edit files.",
+      "networkAccess": true,
+      "expectation": {
+        "required": ["@base-ui/react", "1.0.0"],
+        "anyOf": [["official", "llms.txt"], ["installed", "lockfile"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The response should reconcile current Base UI docs with the installed contract before suggesting popup or state fixes."
+    },
+    {
+      "id": "contextual-form-validation",
+      "description": "Base UI form request still routes through unrelated product context",
+      "kind": "routing",
+      "routingClass": "contextual",
+      "shouldTrigger": true,
+      "prompt": "For an account-settings release, check whether src/profile-form.tsx uses Base UI Field and Form validation correctly with Tailwind 4. The release context is incidental. Review only.",
+      "networkAccess": true,
+      "expectation": {
+        "required": ["Field", "Form", "Tailwind"],
+        "anyOf": [["official", "llms.txt"], ["installed", "1.0.0"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Reward Base UI-specific validation grounded in official component guidance and the fixture's installed versions."
+    },
+    {
+      "id": "negative-material-ui",
+      "description": "Material UI request does not activate Base UI",
+      "kind": "routing",
+      "routingClass": "negative",
+      "shouldTrigger": false,
+      "prompt": "Explain how to theme a Material UI @mui/material Button. This fixture is only background; do not edit it.",
+      "expectation": {
+        "forbidden": ["@base-ui/react"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The answer should stay on Material UI and avoid importing Base UI guidance."
+    },
+    {
+      "id": "no-installed-package",
+      "description": "Missing Base UI dependency is treated as a permission boundary",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Add a Base UI dialog to this React project. Before doing anything, inspect whether Base UI is installed and state the next safe action. Do not edit files or add dependencies in this eval.",
+      "expectation": {
+        "required": ["not installed"],
+        "anyOf": [["ask", "permission", "approval"]],
+        "forbidden": ["installed @base-ui/react"],
+        "minQuestions": 1,
+        "maxQuestions": 1,
+        "files": { "noChanges": true }
+      },
+      "rubric": "The agent must discover that @base-ui/react is absent and ask before adding it, without editing the project."
+    },
+    {
+      "id": "offline-docs-fallback",
+      "description": "Unavailable live index produces a bounded official fallback",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Review src/account-menu.tsx, but this evaluation has no network access. Explain what can and cannot be concluded without changing files.",
+      "expectation": {
+        "required": ["1.0.0", "unavailable"],
+        "anyOf": [["installed contract", "package"], ["official", "base-ui.com"]],
+        "forbidden": ["confirmed current API"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Reward an explicit docs-access limitation, use of installed evidence, and refusal to invent unconfirmed APIs."
+    },
+    {
+      "id": "radix-as-child-port",
+      "description": "Radix asChild is translated to Base UI composition",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Review src/radix-migration.tsx. It was ported from Radix and still uses asChild. Describe the Base UI-compatible correction based on current docs, but do not edit.",
+      "networkAccess": true,
+      "expectation": {
+        "required": ["asChild"],
+        "anyOf": [["render prop", "render="], ["composition", "render"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The response should identify the Radix-only asChild pattern and explain Base UI's documented render composition model."
+    },
+    {
+      "id": "installed-contract-wins",
+      "description": "Installed API wins over newer live documentation",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Suppose the current Base UI docs show a prop that the installed 1.0.0 declarations do not expose. What should this repo implement, and may you upgrade the dependency? Review only.",
+      "networkAccess": true,
+      "expectation": {
+        "required": ["installed", "1.0.0"],
+        "anyOf": [["do not upgrade", "ask", "explicitly requests"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The agent should make the installed contract authoritative and refuse an unrequested dependency upgrade."
+    },
+    {
+      "id": "interaction-validation-plan",
+      "description": "Validation covers real headless-component behavior",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Give the smallest credible validation plan for a changed Base UI Menu in this fixture. No edits or commands are needed.",
+      "expectation": {
+        "required": ["keyboard", "focus"],
+        "anyOf": [["pointer", "screen-reader", "screen reader"], ["typecheck", "lint", "test", "build"]],
+        "forbidden": ["snapshot alone"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Reward repository checks plus keyboard, focus, pointer, and accessibility behavior appropriate to a Menu."
+    },
+    {
+      "id": "avoid-invented-api",
+      "description": "Unconfirmed Base UI state API is reported as uncertain",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "A teammate proposes styling Menu.Item with data-active and using a popup variable named --popup-origin. Neither is shown in this fixture. Explain the evidence needed before accepting those APIs. Do not edit.",
+      "networkAccess": true,
+      "expectation": {
+        "required": ["official", "installed"],
+        "anyOf": [["data attribute", "data-active"], ["CSS variable", "--popup-origin"]],
+        "forbidden": ["safe to use both"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The agent should require confirmation from official component docs or installed declarations instead of inventing state attributes or CSS variables."
+    }
+  ]
+}

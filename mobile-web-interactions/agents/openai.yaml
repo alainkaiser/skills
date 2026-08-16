@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mobile Web Interactions"
+  short_description: "Improve touch ergonomics on websites"
+  default_prompt: "Use $mobile-web-interactions to review and improve this mobile web interaction without weakening browser or accessibility behavior."

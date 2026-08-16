@@ -1,0 +1,142 @@
+{
+  "skill": "implement-figma-component",
+  "cases": [
+    {
+      "id": "explicit-figma-review",
+      "description": "Explicit design implementation invocation routes correctly",
+      "kind": "routing",
+      "routingClass": "explicit",
+      "shouldTrigger": true,
+      "prompt": "Use $implement-figma-component to assess how this fixture's Button should match Figma node 42:15. The exported evidence is in design/design-context.md. Review only.",
+      "expectation": {
+        "required": ["42:15", "Button"],
+        "anyOf": [["existing", "base"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The response should use the provided design evidence and inspect the existing local Button before proposing implementation."
+    },
+    {
+      "id": "implicit-pixel-parity",
+      "description": "Natural pixel-parity request triggers implicitly",
+      "kind": "routing",
+      "routingClass": "implicit",
+      "shouldTrigger": true,
+      "prompt": "Make our existing React button match the supplied Figma node exactly and prove it with browser screenshots and computed styles. For this eval, plan only and do not edit.",
+      "expectation": {
+        "required": ["screenshot", "computed"],
+        "anyOf": [["existing Button", "existing component", "base"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The plan should cover design evidence, base selection, screenshot comparison, and computed-style validation."
+    },
+    {
+      "id": "contextual-library-choice",
+      "description": "Library-evaluation context still routes to Figma workflow",
+      "kind": "routing",
+      "routingClass": "contextual",
+      "shouldTrigger": true,
+      "prompt": "Before coding Figma node 42:15, decide whether src/components/Button.tsx or the installed headless library is the best base. Use design/design-context.md and review only.",
+      "expectation": {
+        "required": ["base", "Button.tsx"],
+        "anyOf": [["tradeoff", "reuse", "existing"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Reward a concrete base decision grounded in local code and design behavior rather than rebuilding from scratch."
+    },
+    {
+      "id": "negative-code-to-design",
+      "description": "Editing a Figma design stays outside code implementation",
+      "kind": "routing",
+      "routingClass": "negative",
+      "shouldTrigger": false,
+      "prompt": "Create a new component directly inside my Figma design file from this code. Do not inspect or change this repository.",
+      "expectation": {
+        "forbidden": ["implement in src", "browser parity"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The response should recognize code-to-design as outside this repository implementation workflow."
+    },
+    {
+      "id": "missing-figma-artifact",
+      "description": "Missing design node blocks implementation",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Implement a card from Figma, but I supplied no link, node, screenshot, or exported specs. State the next safe action and do not edit files.",
+      "expectation": {
+        "anyOf": [["Figma link", "node", "screenshot", "exported specs"]],
+        "minQuestions": 1,
+        "maxQuestions": 1,
+        "blocked": true,
+        "files": { "noChanges": true }
+      },
+      "rubric": "Ask for the missing design artifact before implementing and leave the code untouched."
+    },
+    {
+      "id": "tool-auth-blocked",
+      "description": "Blocked Figma tools request exported evidence",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "A Figma URL is known, but Figma authentication is blocked and no screenshot was supplied. Explain the next step; do not implement.",
+      "expectation": {
+        "anyOf": [["screenshot", "exported specs"], ["do not implement", "blocked"]],
+        "minQuestions": 1,
+        "maxQuestions": 1,
+        "blocked": true,
+        "files": { "noChanges": true }
+      },
+      "rubric": "The agent should ask for a screenshot or exported specs and refuse to implement from a bare URL."
+    },
+    {
+      "id": "reuse-local-base",
+      "description": "Existing component is preferred when it fits",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Using design/design-context.md and src/components/Button.tsx, choose a base for node 42:15 and identify the smallest gaps. Review only.",
+      "expectation": {
+        "required": ["Button.tsx", "40", "16", "6"],
+        "anyOf": [["reuse", "existing component", "base"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Prefer the existing Button and describe only evidence-backed state, size, and token gaps."
+    },
+    {
+      "id": "truncated-design-context",
+      "description": "Truncated context is resolved through metadata and child nodes",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Assume get_design_context for a large Figma frame was truncated. Describe the next evidence-gathering steps before editing.",
+      "expectation": {
+        "required": ["metadata", "child"],
+        "anyOf": [["get_design_context", "design context"], ["node map", "individually"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Use metadata to map child nodes, then fetch only needed child context instead of guessing."
+    },
+    {
+      "id": "visual-proof-standard",
+      "description": "Visual parity requires screenshots and computed styles",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "design/browser-evidence.md shows no validation yet. Can this component be called pixel-perfect? State the missing proof and do not edit.",
+      "expectation": {
+        "required": ["screenshot", "computed style"],
+        "anyOf": [["cannot", "unverified", "not proven"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Reject a pixel-perfect claim until browser screenshots and computed-style comparisons cover required states."
+    },
+    {
+      "id": "browser-unavailable",
+      "description": "Missing browser automation remains a reported verification gap",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Implementation and static checks are complete, but browser automation is unavailable. Describe the honest completion report.",
+      "expectation": {
+        "required": ["static checks"],
+        "anyOf": [["visual parity remains unverified", "visual parity", "unverified"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Report static evidence and explicitly retain visual parity as unverified; do not overclaim."
+    }
+  ]
+}
