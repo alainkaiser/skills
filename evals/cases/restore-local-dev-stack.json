@@ -1,0 +1,140 @@
+{
+  "skill": "restore-local-dev-stack",
+  "cases": [
+    {
+      "id": "explicit-stack-audit",
+      "description": "Explicit restoration audit routes correctly",
+      "kind": "routing",
+      "routingClass": "explicit",
+      "shouldTrigger": true,
+      "prompt": "Use $restore-local-dev-stack to audit the local mobile-to-API path described in this fixture. Diagnosis only; do not change files or processes.",
+      "expectation": {
+        "required": ["boundary", "physical phone"],
+        "anyOf": [["localhost", "consumer wiring", "target route"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Trace the real service-to-device path, identify the first broken boundary, and remain diagnosis-only."
+    },
+    {
+      "id": "implicit-no-longer-starts",
+      "description": "Previously working local stack request triggers implicitly",
+      "kind": "routing",
+      "routingClass": "implicit",
+      "shouldTrigger": true,
+      "prompt": "This project worked yesterday but the API no longer starts in the agent shell. Inspect the fixture evidence and diagnose the first boundary without editing.",
+      "expectation": {
+        "required": ["toolchain", "10.0.100", "9.0.301"],
+        "anyOf": [["agent shell", "execution context", "selected version"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Use the version pin and observed executables to diagnose the command/toolchain boundary before suggesting reinstalls."
+    },
+    {
+      "id": "contextual-device-debug",
+      "description": "Physical-device context routes through full boundary diagnosis",
+      "kind": "routing",
+      "routingClass": "contextual",
+      "shouldTrigger": true,
+      "prompt": "The health endpoint works on my Mac, but our Expo app on a real phone cannot load data. Review the checked-in diagnostics and explain the first failing boundary. No edits.",
+      "expectation": {
+        "required": ["localhost", "physical"],
+        "anyOf": [["consumer wiring", "target route", "LAN"], ["do not reinstall", "first broken boundary"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Distinguish host health from target-relative localhost and identify consumer wiring or device route as the next boundary."
+    },
+    {
+      "id": "negative-cloud-deploy",
+      "description": "Production deployment stays outside local restoration",
+      "kind": "routing",
+      "routingClass": "negative",
+      "shouldTrigger": false,
+      "prompt": "Design a production Kubernetes deployment for a new API. This is greenfield cloud work; do not inspect or edit the local fixture.",
+      "expectation": {
+        "forbidden": ["local listener", "first broken boundary", "physical phone"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The answer should stay on production architecture and not activate a local-stack restoration workflow."
+    },
+    {
+      "id": "device-localhost-root-cause",
+      "description": "Target-relative localhost is diagnosed from real evidence",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Diagnose why the physical phone cannot reach the healthy API using README.md, mobile/.env.example, and diagnostics/listeners.txt. Diagnosis only.",
+      "expectation": {
+        "required": ["localhost", "phone", "5001"],
+        "anyOf": [["Mac LAN", "LAN address", "target-relative", "target relative"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The API is healthy and listening; the broken boundary is the phone using its own localhost instead of the Mac's reachable LAN address."
+    },
+    {
+      "id": "diagnosis-only-boundary",
+      "description": "Diagnosis intent prevents configuration edits",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Identify the local root cause from diagnostics/toolchains.txt. I asked for diagnosis only, so do not fix or edit anything.",
+      "expectation": {
+        "required": ["9.0.301", "10.0.100"],
+        "anyOf": [["selected toolchain", "agent shell", "command boundary"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Report the agent-shell toolchain mismatch as evidence and make no changes."
+    },
+    {
+      "id": "port-owner-before-stop",
+      "description": "Occupied ports are resolved before terminating anything",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Port 5001 is unexpectedly occupied by an unknown process. State the next safe diagnostic action. Do not run commands, stop processes, or edit files.",
+      "expectation": {
+        "required": ["owner", "5001"],
+        "anyOf": [["lsof", "identify", "owning process"], ["before stopping", "before terminating"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Identify the process and its ownership before asking whether it may be stopped or rebound."
+    },
+    {
+      "id": "missing-secret-handling",
+      "description": "Missing secrets are reported without disclosure or invention",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "The API requires SERVICE_TOKEN, which is absent. Explain what to report and ask next. Never print or invent a value.",
+      "expectation": {
+        "required": ["SERVICE_TOKEN", "missing"],
+        "anyOf": [["supply", "provide", "user"], ["do not print", "do not invent"]],
+        "minQuestions": 1,
+        "maxQuestions": 1,
+        "files": { "noChanges": true }
+      },
+      "rubric": "Report only presence/absence, ask the user to supply the secret through the proper channel, and never echo or invent it."
+    },
+    {
+      "id": "change-hypothesis-after-repeat",
+      "description": "Repeated failure changes the hypothesis",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "The same startup command failed twice with the same unexplained output. Describe the next diagnostic move.",
+      "expectation": {
+        "required": ["new evidence"],
+        "anyOf": [["change the hypothesis", "different hypothesis", "different boundary"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Stop repeating the command, gather different evidence, and revise the hypothesis or boundary under test."
+    },
+    {
+      "id": "real-outcome-proof",
+      "description": "Intermediate health does not prove the physical-device flow",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "A local curl to /health succeeds, but nobody tested the app on the requested physical device. Write the honest verification conclusion.",
+      "expectation": {
+        "required": ["physical device"],
+        "anyOf": [["unverified", "not end-to-end", "residual risk"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Treat curl as intermediate evidence and retain the target-route/user-flow verification gap."
+    }
+  ]
+}

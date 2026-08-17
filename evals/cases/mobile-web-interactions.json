@@ -1,0 +1,147 @@
+{
+  "skill": "mobile-web-interactions",
+  "cases": [
+    {
+      "id": "explicit-touch-review",
+      "description": "Explicit invocation routes to mobile web interaction guidance",
+      "kind": "routing",
+      "routingClass": "explicit",
+      "shouldTrigger": true,
+      "prompt": "Use $mobile-web-interactions to review index.html and styles.css for touch ergonomics. Review only; do not edit.",
+      "expectation": {
+        "required": ["tap", "target"],
+        "anyOf": [["user-select", "selection"], ["focus", "keyboard"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Identify the scoped mobile-web interaction problems without editing the fixture."
+    },
+    {
+      "id": "implicit-ios-tap-issue",
+      "description": "Natural iOS tap feedback request triggers implicitly",
+      "kind": "routing",
+      "routingClass": "implicit",
+      "shouldTrigger": true,
+      "prompt": "The Save button flashes a gray rectangle in iPhone Safari and its label sometimes selects on a long press. Explain the safe CSS boundary after inspecting the fixture. Do not edit.",
+      "expectation": {
+        "required": ["Save", "specific"],
+        "anyOf": [["tap-highlight", "tap highlight"], ["user-select", "selection"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Scope any suppression to the affected control and require replacement feedback instead of recommending a global reset."
+    },
+    {
+      "id": "contextual-profile-actions",
+      "description": "Product context still invokes touch-target review",
+      "kind": "routing",
+      "routingClass": "contextual",
+      "shouldTrigger": true,
+      "prompt": "Before releasing the account page, check whether the tiny Edit and Delete controls are practical for fingers without visually enlarging their icons. Review only.",
+      "expectation": {
+        "required": ["Edit", "Delete"],
+        "anyOf": [["44", "target"], ["hit", "pseudo-element"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Recommend a larger active region while checking spacing and overlap between the adjacent controls."
+    },
+    {
+      "id": "negative-native-ios",
+      "description": "Native iOS interface request does not activate the web skill",
+      "kind": "routing",
+      "routingClass": "negative",
+      "shouldTrigger": false,
+      "prompt": "Review the 44-point hit area of a native SwiftUI toolbar button. Do not discuss HTML or CSS.",
+      "expectation": {
+        "forbidden": ["-webkit-tap-highlight-color", "CSS pseudo-element"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Stay in native SwiftUI guidance and do not route to a mobile-web CSS skill."
+    },
+    {
+      "id": "remove-global-resets",
+      "description": "Global tap and selection resets are narrowed safely",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Fix only styles.css so page text remains selectable, keyboard focus is visible, and any tap-highlight suppression is limited to the Save control that already has pressed feedback. Preserve the compact visual sizes.",
+      "sandboxMode": "workspace-write",
+      "expectation": {
+        "required": ["styles.css", "focus"],
+        "anyOf": [["scoped", "Save"], ["tap highlight", "tap-highlight"]],
+        "files": {
+          "contains": {
+            "styles.css": [".save-button", "-webkit-tap-highlight-color", ":focus-visible"]
+          },
+          "notContains": {
+            "styles.css": ["html {\n  -webkit-tap-highlight-color: transparent;\n  user-select: none", "button:focus {\n  outline: none"]
+          }
+        }
+      },
+      "rubric": "Remove broad browser-behavior suppression, restore keyboard focus, and scope the tap choice to the control with immediate pressed feedback."
+    },
+    {
+      "id": "wcag-versus-preferred-target",
+      "description": "Target-size claims distinguish conformance from stronger guidance",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "A teammate says every web button below 44×44 pixels automatically fails WCAG AA. Check that claim against this fixture and explain the practical target to use. Do not edit.",
+      "expectation": {
+        "required": ["24", "44", "CSS pixels"],
+        "anyOf": [["AA", "Level AA"], ["enhanced", "AAA"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Correctly separate the WCAG 2.2 AA floor and spacing exception from the preferred or enhanced 44 CSS pixel target."
+    },
+    {
+      "id": "apple-unit-distinction",
+      "description": "Apple platform points are not mislabeled as web pixels",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Should our web CSS comment say that Apple requires 44 physical pixels? Give the precise correction without editing files.",
+      "expectation": {
+        "required": ["points", "CSS pixels"],
+        "forbidden": ["44 physical pixels is correct"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "State Apple's 44-point platform guidance separately from CSS-pixel measurements used for web targets."
+    },
+    {
+      "id": "pseudo-element-constraints",
+      "description": "Invisible hit-area expansion includes overlap and clipping checks",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Can we add an absolutely positioned ::after inset around both 24px icon buttons and call the result accessible? Review the actual spacing in styles.css; do not edit.",
+      "expectation": {
+        "required": ["2px", "overlap"],
+        "anyOf": [["clipping", "overflow"], ["hit testing", "stacking"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Reject an unqualified pseudo-element fix because adjacent expanded regions would overlap; require hit-testing and clipping checks."
+    },
+    {
+      "id": "hybrid-pointer-capabilities",
+      "description": "Pointer media queries account for hybrid input hardware",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "For a touchscreen laptop with a trackpad, explain whether viewport width, pointer: coarse, or any-pointer: coarse should control touch-specific sizing. No edits.",
+      "expectation": {
+        "required": ["pointer", "any-pointer", "hybrid"],
+        "anyOf": [["viewport", "not infer"], ["keyboard", "baseline"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Distinguish primary and any-pointer capabilities, avoid viewport-as-touch detection, and preserve a usable baseline for all inputs."
+    },
+    {
+      "id": "ios-form-control-focus-zoom",
+      "description": "Small form-control text is connected to iOS focus zoom without disabling user zoom",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "The email field zooms the page when focused on an iPhone. Inspect the fixture, explain the likely cause and smallest safe correction, and state how to verify it. Do not edit files.",
+      "expectation": {
+        "required": ["14px", "16px", "computed", "iOS"],
+        "anyOf": [["real device", "iPhone", "Safari"], ["page scale", "scroll"]],
+        "forbidden": ["user-scalable=no", "maximum-scale=1 is the fix"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Identify the 14px computed input text as an iOS WebKit focus-zoom trigger, recommend at least 16px, preserve user zoom, and require platform-realistic verification."
+    }
+  ]
+}

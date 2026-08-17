@@ -1,0 +1,141 @@
+{
+  "skill": "eclipse",
+  "cases": [
+    {
+      "id": "explicit-eclipse-plan",
+      "description": "Explicit Eclipse invocation routes correctly",
+      "kind": "routing",
+      "routingClass": "explicit",
+      "shouldTrigger": true,
+      "prompt": "Use $eclipse to describe how you would coordinate the task in task.md. This CLI eval has no Codex thread-management tools, so do not edit files or emulate workers.",
+      "expectation": {
+        "required": ["GPT-5.6 Luna", "Max"],
+        "anyOf": [["thread-management", "thread management", "unavailable"], ["never use subagents", "no subagents"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The response must recognize Eclipse's exact Sol/Luna thread contract and the unavailable runtime without substituting subagents."
+    },
+    {
+      "id": "implicit-sol-luna-coordination",
+      "description": "Natural Sol/Luna coordination request triggers implicitly",
+      "kind": "routing",
+      "routingClass": "implicit",
+      "shouldTrigger": true,
+      "prompt": "Coordinate this repository change with Sol directing Luna workers at Max effort and keep the number of Codex threads minimal. Plan only; no edits.",
+      "expectation": {
+        "required": ["acceptance", "Luna", "Max"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Reward acceptance-criteria-driven planning with the fewest coherent Luna threads."
+    },
+    {
+      "id": "contextual-debug-coordination",
+      "description": "Debugging context still invokes Eclipse orchestration",
+      "kind": "routing",
+      "routingClass": "contextual",
+      "shouldTrigger": true,
+      "prompt": "A flaky test and a formatter regression may be independent. Use the Eclipse Sol/Luna division to coordinate investigation and proof, but only describe the dispatch because thread tools are unavailable here.",
+      "expectation": {
+        "required": ["independent", "proof"],
+        "anyOf": [["fewest", "one thread", "two threads"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The response should reason about independence and evidence before deciding thread count."
+    },
+    {
+      "id": "negative-simple-explanation",
+      "description": "Simple explanation does not activate orchestration",
+      "kind": "routing",
+      "routingClass": "negative",
+      "shouldTrigger": false,
+      "prompt": "Explain in two sentences what a TypeScript union type is. Do not inspect or modify the fixture.",
+      "expectation": {
+        "forbidden": ["Luna", "workstream", "thread"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "A simple conceptual answer should not start an Eclipse workflow."
+    },
+    {
+      "id": "no-worker-needed",
+      "description": "Non-work request creates no worker thread",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Using Eclipse's decision rules, decide whether answering a one-line repository status question needs a Luna worker. Explain only; no tools or edits.",
+      "expectation": {
+        "required": ["no worker"],
+        "anyOf": [["no implementation", "no investigation", "no testing"]],
+        "forbidden": ["create a Luna thread"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The correct outcome is no worker thread for a request requiring no implementation, investigation, debugging, or testing."
+    },
+    {
+      "id": "single-coherent-workstream",
+      "description": "One coherent deliverable starts with one Luna thread",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "A change touches one parser and its focused tests in the same boundary. Describe the Eclipse dispatch, ownership, and proof. Thread tools are unavailable, so do not execute it.",
+      "expectation": {
+        "required": ["one", "Luna", "Max", "owned"],
+        "anyOf": [["focused tests", "proof", "pass condition"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Use one Luna thread for the coherent parser-and-tests deliverable and require exact verification evidence."
+    },
+    {
+      "id": "independent-workstreams",
+      "description": "Disjoint workstreams may use separate owned threads",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Read task.md. Assume both changes are urgent, independently verifiable, and editing disjoint files. Describe the smallest useful Eclipse ledger and dispatch. Do not execute it.",
+      "expectation": {
+        "required": ["src/normalize-name.ts", "src/format-status.ts", "ownership"],
+        "anyOf": [["two Luna", "two threads", "separate workstreams"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Two disjoint urgent tasks may use two Luna threads with explicit exclusive ownership and separate proof."
+    },
+    {
+      "id": "dependent-follow-up",
+      "description": "Dependent work stays sequential and reuses context",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "A test repair depends on the API shape produced by an unfinished implementation. Explain how Eclipse coordinates it without duplicate exploration. Do not execute tools.",
+      "expectation": {
+        "required": ["sequential"],
+        "anyOf": [["same thread", "follow-up", "reuse"], ["not concurrent", "wait"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Dependent work should wait, consume the result, and use a follow-up rather than a concurrent duplicate thread."
+    },
+    {
+      "id": "refined-retry-policy",
+      "description": "Failed Luna deliverable gets one evidence-driven retry",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "A Luna worker twice reports the same failing test without proving the requested fix. Describe Eclipse's retry and escalation sequence.",
+      "expectation": {
+        "required": ["same Luna thread", "one", "Sol"],
+        "anyOf": [["failed assumption", "new evidence", "change the hypothesis"], ["refined retry", "materially different"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Name the failed assumption, send one materially refined retry, then escalate only the blocked deliverable to Sol."
+    },
+    {
+      "id": "runtime-unavailable",
+      "description": "Unavailable exact runtime blocks substitution",
+      "kind": "outcome",
+      "routingClass": "explicit",
+      "prompt": "Use Eclipse, but this runtime cannot verify GPT-5.6 Luna at Max or create Codex threads. State the safe next step; do not perform the repository task.",
+      "expectation": {
+        "required": ["unavailable"],
+        "anyOf": [["ask", "direction"], ["do not substitute", "no downgrade", "no subagent"]],
+        "minQuestions": 1,
+        "maxQuestions": 1,
+        "blocked": true,
+        "files": { "noChanges": true }
+      },
+      "rubric": "The agent must report the exact unavailable capability, ask for direction, and refuse silent substitution or downgrade."
+    }
+  ]
+}

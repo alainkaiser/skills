@@ -1,0 +1,32 @@
+html {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.actions {
+  display: flex;
+  gap: 2px;
+}
+
+.email-input {
+  font-size: 14px;
+}
+
+.icon-button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+}
+
+.save-button {
+  height: 32px;
+  padding-inline: 16px;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button:focus {
+  outline: none;
+}

@@ -1,0 +1,19 @@
+{
+  "name": "alainkaiser-skills",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": "^20.20.0 || >=22.22.0"
+  },
+  "scripts": {
+    "eval:validate": "node evals/scripts/validate-evals.mjs",
+    "eval:test": "node --test evals/tests/*.test.mjs",
+    "eval:skill": "node evals/scripts/run-evals.mjs",
+    "eval:all": "node evals/scripts/run-evals.mjs all",
+    "eval:view": "node evals/scripts/view-results.mjs"
+  },
+  "devDependencies": {
+    "@openai/codex-sdk": "0.146.0",
+    "promptfoo": "0.122.0"
+  }
+}

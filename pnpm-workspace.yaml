@@ -1,0 +1,9 @@
+allowBuilds:
+  '@playwright/browser-chromium': false
+  '@swc/core': false
+  esbuild: false
+  onnxruntime-node: false
+  protobufjs: false
+  sharp: false
+minimumReleaseAgeExclude:
+  - promptfoo@0.122.0

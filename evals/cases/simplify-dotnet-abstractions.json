@@ -1,0 +1,139 @@
+{
+  "skill": "simplify-dotnet-abstractions",
+  "cases": [
+    {
+      "id": "explicit-abstraction-review",
+      "description": "Explicit abstraction review routes correctly",
+      "kind": "routing",
+      "routingClass": "explicit",
+      "shouldTrigger": true,
+      "prompt": "Use $simplify-dotnet-abstractions to review the Orders and Payments abstractions in this fixture. Review only; do not edit.",
+      "expectation": {
+        "required": ["OrderService", "IPaymentGateway"],
+        "anyOf": [["Collapse", "Narrow", "Keep", "Investigate"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Trace consumers and jobs, distinguish forwarding order seams from the external payment boundary, and remain review-only."
+    },
+    {
+      "id": "implicit-overengineering-review",
+      "description": "Natural over-engineering request triggers implicitly",
+      "kind": "routing",
+      "routingClass": "implicit",
+      "shouldTrigger": true,
+      "prompt": "This C# feature feels over-engineered. Trace the interface-service-repository path and tell me which seams earn their cost. Do not edit files.",
+      "expectation": {
+        "required": ["trace", "job"],
+        "anyOf": [["OrderService", "repository"], ["Keep", "Collapse", "Investigate"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Use repository evidence and present jobs, not interface counts, as the basis for verdicts."
+    },
+    {
+      "id": "contextual-clean-architecture",
+      "description": "Clean Architecture context invokes targeted simplification",
+      "kind": "routing",
+      "routingClass": "contextual",
+      "shouldTrigger": true,
+      "prompt": "Our small .NET app followed a Clean Architecture template. Review only the Orders call path for unnecessary ceremony while preserving real boundaries.",
+      "expectation": {
+        "required": ["Orders", "boundary"],
+        "anyOf": [["pass-through", "forward"], ["Collapse", "Narrow", "Keep"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Keep scope on Orders and avoid a solution-wide ideological rewrite."
+    },
+    {
+      "id": "negative-performance-tuning",
+      "description": "Unmeasured performance tuning does not activate abstraction removal",
+      "kind": "routing",
+      "routingClass": "negative",
+      "shouldTrigger": false,
+      "prompt": "Make this API faster, but I have no profile, benchmark, or hot-path evidence. Give the first performance-diagnosis step only.",
+      "expectation": {
+        "required": ["measure"],
+        "forbidden": ["collapse IOrderService", "remove interfaces for speed"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "The response should request performance evidence rather than treating abstraction removal as optimization."
+    },
+    {
+      "id": "forwarder-vs-external-port",
+      "description": "Pure forwarding is separated from an external domain port",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "Review IOrderService/OrderService and IPaymentGateway. Give one verdict per candidate with the present job and consequence. No edits.",
+      "expectation": {
+        "required": ["OrderService", "IPaymentGateway", "Collapse", "Keep"],
+        "anyOf": [["forwards", "pass-through"], ["external", "payment boundary"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Collapse the no-policy OrderService seam if evidence supports it, while keeping the domain-specific external payment port."
+    },
+    {
+      "id": "dynamic-plugin-investigate",
+      "description": "Reflection and dynamic loading force an Investigate verdict",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Review src/Plugins/PluginFactory.cs for simplification. This fixture does not include the assemblies or runtime configuration it loads. No edits.",
+      "expectation": {
+        "required": ["Investigate", "reflection"],
+        "anyOf": [["dynamic", "runtime", "assembly"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Unresolved reflection and runtime loading should block collapse and produce a precise Investigate verdict."
+    },
+    {
+      "id": "review-only-no-edit",
+      "description": "Review findings do not authorize refactoring",
+      "kind": "outcome",
+      "routingClass": "explicit",
+      "prompt": "Review the Orders abstractions and recommend a simpler shape. This is review-only; do not edit anything.",
+      "expectation": {
+        "anyOf": [["recommend", "Collapse", "Narrow"]],
+        "forbidden": ["I changed", "files changed"],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Report only evidence-backed findings and recommendations, with no workspace mutation."
+    },
+    {
+      "id": "one-implementation-not-verdict",
+      "description": "Single implementation is only an investigation signal",
+      "kind": "outcome",
+      "routingClass": "implicit",
+      "prompt": "A teammate says every interface with one implementation must be deleted. Evaluate that rule against this fixture. Review only.",
+      "expectation": {
+        "required": ["not", "job"],
+        "anyOf": [["signal", "investigate", "not a verdict"], ["IPaymentGateway", "external"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Reject implementation count as a verdict and assess policy, variability, lifecycle, external risk, and public contracts."
+    },
+    {
+      "id": "ef-repository-unit-of-work",
+      "description": "EF forwarding seams are judged against DbContext behavior",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Review IOrderRepository/OrderRepository as an EF Core repository and unit-of-work seam. State what must be traced before collapse. No edits.",
+      "expectation": {
+        "required": ["DbContext", "SaveChangesAsync"],
+        "anyOf": [["transaction", "lifetime", "policy"], ["Collapse", "Investigate"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Recognize DbContext's unit-of-work role, but trace transactions, lifetime, policy, and consumers before a verdict."
+    },
+    {
+      "id": "published-contract-preserved",
+      "description": "Published abstraction requires compatibility planning",
+      "kind": "outcome",
+      "routingClass": "contextual",
+      "prompt": "Review src/Public/IReportFormatter.cs using public-api.md. It looks simple; may it be removed directly? No edits.",
+      "expectation": {
+        "required": ["published", "external"],
+        "anyOf": [["compatibility", "migration", "preserve"]],
+        "files": { "noChanges": true }
+      },
+      "rubric": "Preserve the published contract or propose an explicit migration; simplicity alone does not authorize a break."
+    }
+  ]
+}
