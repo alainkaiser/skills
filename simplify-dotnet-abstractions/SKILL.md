@@ -80,6 +80,7 @@ Avoid introducing a new wrapper, helper layer, or generic base class solely to m
 ## Verify the Result
 
 - Run the smallest relevant repository-provided tests, build, format, and analyzer commands.
+- Retain passing evidence for unchanged behavior. Broaden or repeat checks only when new edits, failures, or unresolved boundary risks warrant it.
 - Exercise the affected behavior through its real entry point when practical.
 - Re-run the searches used to build the evidence map and confirm that registrations, mocks, reflection paths, and project references are not stale.
 - Compare the before-and-after call path and confirm that responsibility is clearer rather than merely relocated.
@@ -99,6 +100,6 @@ Include justified abstractions when they answer the user’s question; explain w
 
 * If reflection, source-generated registration, plugins, or dynamic loading cannot be fully resolved, assign **Investigate** and stop short of collapsing that boundary.
 * If a candidate is a published or externally consumed contract, preserve compatibility or propose an explicit migration; do not silently break callers.
-* If tests, build, or analyzers fail after a collapse, revert or restore the last seam and reassess with new evidence before continuing.
+* If a check fails after a collapse, identify whether the failure was introduced by the change, already existed, or comes from the execution environment. Correct an introduced defect; restore only your affected change if needed. Preserve unrelated work and do not weaken the check to obtain a pass.
 * If lifetime, transaction, or authorization ownership is unclear after tracing, keep or narrow rather than collapse.
 * If the request is review-only and an edit was implied by findings, report recommendations without changing files.

@@ -21,7 +21,7 @@ Optimize for the time a teammate needs to understand and safely change the code,
 1. Trace the inputs, decisions, state changes, side effects, failures, and output.
 2. Name the exact reading cost: decoding syntax, retaining distant context, following needless indirection, or inferring hidden behavior.
 3. Make the smallest change that removes that cost.
-4. Run the smallest relevant repository-provided checks.
+4. Run required repository checks and the smallest other checks that cover the changed behavior. Repeat or broaden them only for new edits, failures, or unresolved concerns.
 5. Re-read from the entry point. Confirm a teammate can identify the inputs, main path, branches, failures, state changes, and result in one pass.
 
 Do not use line count, function count, nesting depth, or a pattern name as a verdict by itself.
@@ -36,7 +36,7 @@ Do not use line count, function count, nesting depth, or a pattern name as a ver
 - Names that explain what; comments that explain why, constraints, or non-obvious risk.
 - Focused types for real domain concepts and valid states. Avoid flags or primitives that hide meaning or permit invalid combinations.
 
-Keep a short expression or familiar pipeline when it is already obvious. Use verbosity only to expose information. Avoid extra layers, narrated comments, needless variables, and many one-line helpers.
+Keep simple value selections and familiar pipelines when they are already clear. Prefer a named immutable value over initialization followed by conditional reassignment solely to avoid a ternary. Expand nested or mixed logic when it obscures the decisions; use extra lines to reveal behavior, not to spell out every elementary operation.
 
 ## Report
 
@@ -44,9 +44,4 @@ For reviews, report only concrete reading costs, the simpler shape, and behavior
 
 For implementations, summarize the clearer implementation or path, preserved behavior outside the request, verification results, and skipped checks or residual risk.
 
-## Error Handling
-
-* If the request is review-only, report concrete reading costs without editing files.
-* If repository checks fail after a readability change, restore behavior first, then retry a smaller clarification.
-* If removing indirection would cross into .NET abstraction-collapse territory, hand off to `simplify-dotnet-abstractions` when available; otherwise keep the seam and limit changes to naming and control-flow clarity.
-* If public contracts, ordering, async flow, or side effects cannot be preserved with confidence, stop and report the residual risk instead of guessing.
+If behavior preservation remains uncertain, leave that part unchanged and report the specific uncertainty. For a failed check, distinguish an introduced regression from an existing or environmental failure, then fix the cause within scope.

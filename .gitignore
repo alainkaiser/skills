@@ -2,4 +2,8 @@ node_modules/
 .pnpm-store/
 .eval-cache/
 .eval-workspaces/
-evals/results/
+/evals/**/results/
+/evals/subscription/active-run.json
+__pycache__/
+*.py[cod]
+.DS_Store

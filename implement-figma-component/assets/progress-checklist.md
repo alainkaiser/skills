@@ -1,6 +1,6 @@
 # Figma Implementation Progress
 
-- [ ] 1. Design evidence gathered (context + screenshot + metadata)
+- [ ] 1. Design evidence gathered (context or export, screenshot, relevant properties)
 - [ ] 2. Base chosen and stated
 - [ ] 3. Implemented to the design
 - [ ] 4. Visual parity validated in browser

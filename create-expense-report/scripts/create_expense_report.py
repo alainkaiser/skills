@@ -25,8 +25,9 @@ try:
 except ModuleNotFoundError as exc:
     print(
         f"Missing Python package: {exc.name}\n"
-        "Install or update dependencies with:\n"
-        "  python -m pip install --upgrade openpyxl pypdf reportlab",
+        "Use a Python 3.10+ environment with openpyxl, pypdf, and reportlab.\n"
+        "Install missing packages into an isolated environment when authorized; "
+        "do not upgrade a working environment by default.",
         file=sys.stderr,
     )
     raise SystemExit(1) from exc

@@ -4,7 +4,12 @@ This repository evaluates every root skill as an agent workflow, not only as a f
 prompt. Promptfoo runs Codex against isolated fixtures and records routing, structured outcomes,
 latency, token usage, traces, and a no-skill baseline.
 
-## Why Promptfoo
+For artifact checks through an existing Codex or Claude subscription, use the
+[subscription runner](subscription/README.md). It compares no-skill, original, and
+revised instructions without Promptfoo setup. The framework below adds routing
+coverage and a comparison UI.
+
+## Promptfoo coverage
 
 Promptfoo is the primary runner because its Codex SDK provider now supports the surfaces this
 repository needs: per-provider working directories, Codex structured output, streamed tool events,
@@ -16,11 +21,6 @@ comparison UI. The small Node layer in `evals/scripts/` only fills repository-sp
 - keep every case in a separate workspace so file-changing cases cannot contaminate one another;
 - run deterministic output and file assertions; and
 - verify that every root skill has 10-20 cases with the required routing classes.
-
-Evalite would still require a Codex adapter and skill-routing inference. A custom
-`codex exec --json` harness would give more control, but would recreate Promptfoo's run matrix,
-history, UI, repeat support, and Codex provider integration. Keep custom code here limited to
-fixtures and checks that are specific to these skills.
 
 Research basis:
 
@@ -164,10 +164,6 @@ SKILL_EVAL_DEEP_TRACE=1 pnpm eval:skill -- base-ui
 
 ## Known boundaries
 
-- `eclipse` outcome cases test routing, planning, thread-count decisions, retry policy, and the
-  required refusal when Codex thread tools or exact models are unavailable. A CLI Codex SDK run
-  cannot prove a real desktop multi-thread orchestration; retain an app-level forward test for that
-  integration boundary.
 - `implement-figma-component` cases test evidence gates, base selection, and honest visual-proof
   reporting from local exported context. End-to-end parity still requires an authorized Figma
   connector and browser automation.

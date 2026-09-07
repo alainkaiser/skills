@@ -19,7 +19,7 @@ Read `references/check-matrix.md` after identifying the stack and target. Use on
 
 ## Build the Service Map
 
-Record the intended and observed values before changing anything:
+For multiple services or unclear wiring, record the intended and observed values before changing them. A single-process issue needs only the relevant boundary, not a full table:
 
 | Component | Repository | Start command or profile | Expected port and bind address | Consumer | Health or proof endpoint | Observed state |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -58,12 +58,12 @@ For each failed boundary, state one evidence-backed hypothesis and run the short
 - Classify the cause before editing: machine/toolchain selection, repository configuration, service runtime, consumer wiring, network binding, permission/device state, application code, or agent/sandbox execution context.
 - Prefer a repository-local or session-local correction when it restores the intended documented setup.
 - Preserve unrelated user changes and existing ports. Confirm ownership before terminating or reconfiguring a process.
-- Ask before global configuration edits, installs, dependency changes, destructive actions, or any scope expansion not authorized by the request.
+- Ask before global configuration edits, installs, dependency changes, destructive actions, or scope expansion when the existing request does not already authorize the specific action.
 - Do not convert an environment problem into an application-code workaround unless the infrastructure boundaries are proven correct.
 
 ## Verify the Real Outcome
 
-Repeat the exact check that originally failed, then verify every downstream boundary through the real user flow. A local `curl`, successful build, simulator result, or login is only intermediate evidence when the requested target is a physical device or complete application flow.
+Repeat the exact check that originally failed, then verify the downstream boundaries affected by the fix through the real user flow. Reuse earlier evidence for unchanged boundaries. A local `curl`, successful build, simulator result, or login is only intermediate evidence when the requested target is a physical device or complete application flow.
 
 Report:
 
@@ -75,7 +75,7 @@ Report:
 
 ## Error Handling
 
-* If a check fails in the agent sandbox but may succeed in the user's shell, re-run the same probe outside the sandbox or report the execution-context difference before changing configuration.
+* If a check fails in the agent sandbox but may succeed in the user's shell, use the host's approved execution mechanism for the same bounded probe when available. Otherwise report the execution-context difference before changing configuration.
 * If a port is occupied, identify the owning process before terminating or rebinding; ask before stopping a process that may belong to unrelated work.
 * If a required secret or environment key is missing, report only presence and the non-sensitive endpoint or port it selects; ask the user to supply the value rather than inventing one.
 * If simulator or physical-device reachability cannot be tested from the current session, record the skipped target-route check and residual risk instead of claiming end-to-end success.

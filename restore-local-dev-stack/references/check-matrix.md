@@ -65,7 +65,7 @@ Treat browser console/network evidence as consumer evidence, then confirm the ca
 | Question | Checks | Interpretation |
 | --- | --- | --- |
 | Is the daemon/context available? | `docker context show`; `docker info` | Distinguish daemon/context failure from application failure |
-| What configuration is effective? | Repo compose command; `docker compose config` | Resolve merged files, variables, ports, and profiles without guessing |
+| What configuration is effective? | Inspect the repo compose command and merged service, port, network, and profile fields; filter resolved config before displaying it | Resolve overrides without printing interpolated environment values, credentials, or full connection strings |
 | Are containers healthy and published? | `docker compose ps`; focused service logs; host `lsof` | Container-internal listening does not prove host publication |
 | Can dependencies resolve? | Inspect service names and network configuration | Inside Compose, `localhost` refers to the current container |
 
