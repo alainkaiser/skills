@@ -1,0 +1,3 @@
+interface:
+  display_name: "Writing Pull Requests"
+  short_description: "Write concise PR titles and descriptions"
