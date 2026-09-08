@@ -39,7 +39,7 @@ Stop after the question. If the receipts are not ready, give the user the single
 ## Receipt Scope
 
 - Treat every receipt/invoice PDF found in the selected folder as a candidate, excluding generated report outputs.
-- Show the candidate count and date span, then ask whether to include all of them. If the user agrees, lock the exact file set and do not ask a separate report-period question.
+- Show the candidate count and date span. If the prompt already specifies the exact files or says to include all receipts in the selected folder, treat that as confirmation; otherwise ask whether to include all candidates. Lock the accepted file set and do not ask a separate report-period question.
 - Never remove a locked receipt because of its date, folder name, billing period, or an inferred reporting month. Change the set only when the user explicitly includes or excludes files.
 - If the user wants a subset, present concrete choices derived from the actual files, such as date groups or filenames. Do not infer a subset from an ambiguous reply.
 - Record the locked relative paths as `confirmed_source_pdfs` in the manifest. Before generation, ensure the expense rows match that set exactly and show any exclusions explicitly.
@@ -63,21 +63,19 @@ Treat each phase as a gate. Skip facts already known and questions that do not a
 3. Ask for the report user name if it is still unknown.
 4. Confirm and lock the receipt scope. If all candidates are accepted, derive the date span from them and do not narrow it later.
 5. Classify rows using the template rules. When input is needed, present choices as described above. Ask for project or cost context only where it cannot be inferred; do not assume every row has the same project.
-6. Ask whether private-car trips must be included. If yes, collect one trip at a time: date, kilometers, start, destination, reason, and project.
+6. Ask whether private-car trips must be included only if the supplied scope does not already resolve this. If yes, collect one trip at a time: date, kilometers, start, destination, reason, and project.
 7. Convert non-CHF receipt amounts automatically using trusted online CHF exchange rates. Use an exact booked CHF card/bank amount only when the user has already supplied it or an explicit expense policy requires it.
-8. Create a manifest from `assets/manifest.template.json` with `confirmed_source_pdfs` and present a compact review. Resolve uncertainties progressively, state included and excluded receipt counts, then ask for final confirmation before generation.
+8. Create a manifest from `assets/manifest.template.json` with `confirmed_source_pdfs` and present a compact review. Resolve uncertainties progressively and state included and excluded receipt counts. In guided intake, ask for final confirmation before generation unless the user already approved the reviewed data or explicitly requested generation without another confirmation. When all inputs and scope were supplied up front with a request to generate, proceed without an artificial approval turn.
 9. Run the generator and validate the confirmed receipt set, XLSX rows/formulas, PDF page count, first-page rendering, receipt order, total CHF, and FX notes.
 
 ## Generator
 
-The script is cross-platform Python 3.10+. It requires current compatible releases of `openpyxl`, `pypdf`, and `reportlab`; install or refresh them with:
+The script requires Python 3.10+ with `openpyxl`, `pypdf`, and `reportlab`. Prefer an existing project, bundled, or isolated runtime with these packages. Check imports using that same interpreter before generation. Install missing packages only when authorized, into an isolated environment; do not upgrade a working environment as a routine step.
+
+Resolve the script relative to this skill's directory and the manifest and output directory relative to the user's report workspace. The command below uses placeholders for those resolved paths; do not assume the current directory contains the installed skill.
 
 ```bash
-python -m pip install --upgrade openpyxl pypdf reportlab
-```
-
-```bash
-python scripts/create_expense_report.py --manifest expense-manifest.json --out-dir .
+"<python>" "<skill-dir>/scripts/create_expense_report.py" --manifest "<report-dir>/expense-manifest.json" --out-dir "<report-dir>"
 ```
 
 Default outputs:
@@ -87,7 +85,7 @@ Default outputs:
 
 ## Error Handling
 
-* If `scripts/create_expense_report.py` exits with a missing-package error, install or upgrade `openpyxl`, `pypdf`, and `reportlab`, then re-run the generator.
+* If the generator reports a missing package, check the selected interpreter and follow the runtime guidance above. A missing package is not a reason to upgrade all dependencies.
 * If a receipt PDF is unreadable after a second extraction or rendering pass, ask for a clearer copy; do not invent amounts, dates, or vendors.
 * If online FX lookup fails, retry once with another trusted rate source. If it still fails, report the blocked currency conversion and ask only for the booked CHF amount or permission to pause that row.
 * If generated XLSX rows, PDF page count, receipt order, or `confirmed_source_pdfs` do not match the locked set, stop and reconcile the manifest before regenerating.

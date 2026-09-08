@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Development": {
-      "commandName": "Project",
-      "applicationUrl": "http://0.0.0.0:5001"
-    }
-  }
-}
