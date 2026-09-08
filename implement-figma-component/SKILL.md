@@ -7,8 +7,6 @@ description: "Implement or refine UI components in an existing frontend codebase
 
 Turn the supplied design into code that fits the repository and verify the rendered result against the design. Discover component placement, styling conventions, and reusable primitives from the codebase. Ask only when missing design evidence or an ambiguous target materially changes implementation; do not ask the user to locate files you can find.
 
-For complex work, use `assets/progress-checklist.md` as checkpoints in task context. Do not copy a tracking file into the repository unless requested.
-
 ## 1. Gather Design Evidence
 
 Use the available Figma connector or inspection tools to obtain the selected node's design context and screenshot. Tool names vary by host; inspect their current schemas. A context response may already include a usable screenshot, so reuse it instead of requesting the same evidence twice.
