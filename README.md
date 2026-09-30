@@ -14,6 +14,7 @@ npx skills add alainkaiser/skills --skill <skill-name>
 
 - `base-ui`
 - `create-expense-report`
+- `dispatch-sessions` (Claude Code only; install with `--agent claude-code`)
 - `implement-figma-component`
 - `mobile-web-interactions`
 - `restore-local-dev-stack`
