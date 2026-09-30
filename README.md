@@ -14,14 +14,23 @@ npx skills add alainkaiser/skills --skill <skill-name>
 
 - `base-ui`
 - `create-expense-report`
+- `dispatch-sessions` (Claude Code only; install with `--agent claude-code`)
+- `git-workflow`
 - `implement-figma-component`
 - `mobile-web-interactions`
-- `restore-local-dev-stack`
 - `simplify-dotnet-abstractions`
-- `write-obvious-code`
 - `write-plainly`
-- `writing-pr`
 
 ## Layout
 
 Each skill lives in its own directory with a `SKILL.md` file.
+
+## Local Development
+
+Install selected skills from the local checkout globally for Codex, Cursor, and Claude Code:
+
+```bash
+npx skills add "$HOME/Documents/dev/personal/skills" --global --skill git-workflow --agent codex cursor claude-code --yes
+```
+
+The CLI copies the current files into the shared global skill folder and links Claude Code to that installation. Rerun this command after local edits. Global local-path installs are not recorded in the CLI's global lockfile. After publishing, reinstall from `alainkaiser/skills` with the same options to enable GitHub source tracking and `npx skills update -g`.
