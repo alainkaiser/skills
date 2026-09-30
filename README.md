@@ -14,7 +14,7 @@ npx skills add alainkaiser/skills --skill <skill-name>
 
 - `base-ui`
 - `create-expense-report`
-- `dispatch-sessions` (Claude Code only; install with `--agent claude-code`)
+- `dispatch-sessions` (Claude Code only; install with `--agent claude-code --copy`, which keeps it out of the shared `.agents/skills` folder that Codex and Cursor read)
 - `git-workflow`
 - `implement-figma-component`
 - `mobile-web-interactions`
