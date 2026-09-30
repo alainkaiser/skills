@@ -18,9 +18,7 @@ npx skills add alainkaiser/skills --skill <skill-name>
 - `git-workflow`
 - `implement-figma-component`
 - `mobile-web-interactions`
-- `restore-local-dev-stack`
 - `simplify-dotnet-abstractions`
-- `write-obvious-code`
 - `write-plainly`
 
 ## Layout
