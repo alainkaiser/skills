@@ -20,7 +20,6 @@ npx skills add alainkaiser/skills --skill <skill-name>
 - `implement-figma-component`
 - `mobile-web-interactions`
 - `simplify-dotnet-abstractions`
-- `write-plainly`
 
 ## Layout
 
