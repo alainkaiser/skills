@@ -4,7 +4,6 @@ Use this guide after tracing the concrete code. Apply the relevant section; do n
 
 ## Contents
 
-- Evidence standard
 - Interfaces and dependency injection
 - EF Core repositories and units of work
 - Service layers and mapping chains
@@ -13,20 +12,6 @@ Use this guide after tracing the concrete code. Apply the relevant section; do n
 - Projects and Clean Architecture
 - Framework-provided seams
 - Primary references
-
-## Evidence Standard
-
-Apply the jobs defined in `SKILL.md` only when current consumers, configuration, runtime behavior, public contracts, or committed requirements support them. Evaluate that evidence against cost in the actual change path:
-
-- Require synchronized edits across layers for one behavior change.
-- Navigate multiple files that add no decision, translation, or policy.
-- Duplicate DTOs and mapping with identical semantics and ownership.
-- Hide DI scope, disposal, transactions, retries, exceptions, or cancellation.
-- Reduce useful framework capabilities, such as wrapping EF Core with generic CRUD or leaking `IQueryable` through a supposed test seam.
-- Grow flags, hooks, type parameters, or base-class overrides to serve unrelated cases.
-- Expose a public abstraction whose promised substitutability is not real.
-
-Do not use raw counts of projects, interfaces, handlers, or files as proof. A small harmful seam can cost more than a large justified boundary.
 
 ## Interfaces and Dependency Injection
 
