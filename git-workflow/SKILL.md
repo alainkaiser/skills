@@ -69,7 +69,7 @@ Describe the change that will land. When the scope changes, rewrite the title an
 
 Add the one visual that shows the change fastest:
 
-- **UI change:** before and after screenshots at the same viewport, in a table of at most 3 rows, one per state where the change is most visible. Take the before image from the target branch when you can run it. `gh` cannot upload images, so save the files in a temporary directory outside the repository, mark each table cell with its file name as an HTML comment (`<!-- after-dashboard-375.png -->`), and list the absolute file paths in your reply so the user can drag each file into its cell on GitHub.
+- **UI change:** before and after screenshots at the same viewport, in a table of at most 3 rows, one per state where the change is most visible. Take the before image from the target branch when you can run it. Save the files in a temporary directory outside the repository, reference each in its table cell as `![alt](./after-dashboard-375.png)`, and run `gh pr create` or `gh pr edit` from that directory with one `--attach` per file; `gh` uploads them and rewrites the references. A `gh` older than 2.99.0 has no `--attach`: mark each cell with its file name as an HTML comment instead and list the absolute paths in your reply so the user can drag each file in on GitHub.
 - **Flow or data change:** a Mermaid diagram of at most 8 nodes. GitHub renders it natively.
 - **API change:** a short before and after usage snippet.
 - **Performance claim:** a table of measured before and after numbers with metric and unit. Without comparable measurements, state no number.
