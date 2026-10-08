@@ -15,7 +15,6 @@ npx skills add alainkaiser/skills --skill <skill-name>
 - `base-ui`
 - `branch-review` (adapted from [Matt Pocock's code-review](https://github.com/mattpocock/skills/tree/main/skills/engineering/code-review); MIT license included)
 - `create-expense-report`
-- `dispatch-sessions` (Claude Code only; install with `--agent claude-code --copy`, which keeps it out of the shared `.agents/skills` folder that Codex and Cursor read)
 - `git-workflow`
 - `implement-figma-component`
 - `mobile-web-interactions`
