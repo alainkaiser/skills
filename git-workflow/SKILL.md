@@ -76,7 +76,7 @@ Add the one visual that shows the change fastest:
 
 ### Before Sending
 
-Reread the pull request as the reviewer. The title, first sentence, and visual must say what changed. Delete every sentence that restates the diff or narrates verification.
+Reread the pull request as the reviewer, and again after any push that changes the patch. Check every sentence against the code at the head, and every claim about the behavior before the change against the target branch; the code is the only evidence, not docs or earlier pull request text. The title, first sentence, and visual must say what changed. Delete every sentence that restates the diff or narrates verification.
 
 ## Text-Only Requests
 
