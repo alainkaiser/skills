@@ -14,6 +14,7 @@ npx skills add alainkaiser/skills --skill <skill-name>
 
 - `base-ui`
 - `branch-review` (adapted from [Matt Pocock's code-review](https://github.com/mattpocock/skills/tree/main/skills/engineering/code-review); MIT license included)
+- `ca-incident-response`
 - `git-workflow`
 - `implement-figma-component`
 - `mobile-web-interactions`

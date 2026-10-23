@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: measure-exposure-read-only
+expected_outcome: |
+  The agent reads the tracker for the test hosts and fixed versions, inventories the Mac's
+  TLS clients, then measures each client against the direct and cross-signed test hosts
+  plus a control host, classifying every result as accepted, certificate-rejected (with the
+  error text) or network error. It reports fixed, still-exposed and not-measured tools in
+  separate lists, states that browsers were only measured through URLSession if at all,
+  and makes no changes to the machine.

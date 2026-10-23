@@ -1,0 +1,10 @@
+schema_version: "1.1"
+name: validate-second-opinion
+expected_outcome: |
+  The agent checks each claim against primary sources instead of memory: it concedes point 1
+  and proposes the precise wording ("no indicators of the named campaigns found in what was
+  searched"), fetches GHSA-vcvr-r3jv-pc5j and shows it is the September next/og advisory while
+  the October ones are GHSA-2464-fhr4-w9xw and GHSA-673q-mjm6-r5xr, rejects point 3 with the
+  reason that a VPN does not change what a client trusts and names the bundle plus integrity
+  checks that do, and agrees with point 4 by explaining pip's vendored certifi and per-venv
+  copies. Nothing on the machine is changed.

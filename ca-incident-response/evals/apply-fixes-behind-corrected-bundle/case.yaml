@@ -1,0 +1,11 @@
+schema_version: "1.1"
+name: apply-fixes-behind-corrected-bundle
+expected_outcome: |
+  The agent locates or produces a CA bundle that excludes the bad roots and cross-signers,
+  validates it against the test hosts and the download hosts, exports it through
+  SSL_CERT_FILE, CURL_CA_BUNDLE and GIT_SSL_CAINFO with HOMEBREW_FORCE_BREWED_CA_CERTIFICATES
+  unset, runs brew update and verifies third-party tap HEADs against GitHub, upgrades the
+  Homebrew formulae, installs Node through fnm with tarball checksums verified against
+  nodejs.org and the installed binaries compared to the verified tarballs before setting the
+  default, re-runs the verification, and reports fixed and still-exposed clients in separate
+  lists without touching project repositories.
