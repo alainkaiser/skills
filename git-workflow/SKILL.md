@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Branch names, Conventional Commits messages, and pull request titles and descriptions. Must be used whenever an agent names or creates a branch, commits, pushes, or opens or updates a pull request, including as the last step of a broader task, and for any request to write, shorten, or update that text.
+description: Branch names, Conventional Commits messages, and pull request titles, descriptions, and visuals. Must be used whenever an agent names or creates a branch, commits, pushes, or opens or updates a pull request, including as the last step of a broader task, and for any request to write, shorten, or update that text.
 ---
 
 # Git Workflow
@@ -44,7 +44,7 @@ The title uses the commit header format and describes the whole change against t
 
 Assign the pull request to its author, the person responsible for getting it merged: `gh pr create --assignee @me`.
 
-A reviewer should understand the change from the title, the first sentence, and the visual, then read the diff for the details. When the repository has a pull request template, fill its sections instead of this shape; the caps and rules below still apply.
+A reviewer should understand the change from the title, the first sentence, and the visuals, then read the diff for the details. When the repository has a pull request template, fill its sections instead of this shape; the caps and rules below still apply.
 
 ```markdown
 ### Mainly closes:
@@ -52,7 +52,9 @@ A reviewer should understand the change from the title, the first sentence, and 
 
 <One or two sentences: what changes for users or the system, and why.>
 
-<One visual, when one applies>
+Try it: <URL of the changed page on the preview deployment>
+
+<Visuals, when they apply>
 
 ### What's inside:
 - <up to 5 bullets, one line each>
@@ -62,6 +64,7 @@ A reviewer should understand the change from the title, the first sentence, and 
 ```
 
 - **Mainly closes:** only with a ticket. Use the URL the user or ticket gave, or the tracker base URL earlier pull requests in the repository use; otherwise write the bare key. For a GitHub issue, write `- Closes #42`; merging into the default branch then closes the issue.
+- **Try it:** only when the branch's preview deployment URL is known as you write. The URL opens the page the change affects.
 - **What's inside:** behavior a reviewer can check, in outcome terms. Retry counts, timeouts, class names, and file lists belong to the diff.
 - **What else:** only what the reviewer must decide, act on, or check by hand: a deviation from the ticket, a risk, a rollout step, a check that failed or could not run.
 - Each bullet is one sentence of about 100 characters or fewer. Items beyond a cap go in your reply to the user.
@@ -82,16 +85,31 @@ Describe the change that will land. When the scope changes, rewrite the title an
 
 ### Visuals
 
-Add the one visual that shows the change fastest:
+Add the visual that shows the change fastest. A change that spans two layers, such as an endpoint and its table, gets one for each, at most two, in the order a reviewer reads them.
 
-- **UI change:** before and after screenshots at the same viewport, in a table of at most 3 rows, one per state where the change is most visible. Take the before image from the target branch when you can run it. Save the files in a temporary directory outside the repository, reference each in its table cell as `![alt](./after-dashboard-375.png)`, and run `gh pr create` or `gh pr edit` from that directory with one `--attach` per file; `gh` uploads them and rewrites the references. A `gh` older than 2.99.0 has no `--attach`: mark each cell with its file name as an HTML comment instead and list the absolute paths in your reply so the user can drag each file in on GitHub.
-- **Flow or data change:** a Mermaid diagram of at most 8 nodes. GitHub renders it natively.
-- **API change:** a short before and after usage snippet.
-- **Performance claim:** a table of measured before and after numbers with metric and unit. Without comparable measurements, state no number.
+- **UI change on one screen:** a table of at most 3 rows, each a before and an after screenshot at the same viewport. Each row is a state, width, or theme where the change is visible: an error state, 375 px, dark mode.
+- **UI built from a design:** the design image next to a screenshot of the built screen at the design's width, in place of before and after. Use a design image the user gave or one a design tool in your harness exports; without one, show before and after.
+- **UI flow across screens:** a stepper, a multi-page form, scrolling. One video of the same journey before and then after, under 60 seconds.
+- **Animation or transition change:** that video with the step that starts the motion in slow motion, so the reviewer sees the motion itself. When the change handles reduced motion, the second visual is a video of the head branch with reduced motion on.
+- **HTTP API change:** a table of the changed endpoints, one row each, at most 8. Add a short before and after request or response snippet when a payload shape changes.
+
+  | Method | Path | Change |
+  | --- | --- | --- |
+  | `GET` | `/api/books/{id}/loans` | added |
+  | `PATCH` | `/api/books/{id}` | `title` is required |
+
+- **Database schema change:** a Mermaid `erDiagram` of the changed tables and their direct relations, at most 8 tables, showing keys and changed columns. Mark each changed column with an attribute comment: `timestamptz due_at "added"`. Data loss, table locks, and backfills go in **What else**.
+- **Infrastructure-as-code change:** the plan summary of resources to add, change, and destroy, then every resource the plan replaces or destroys, by address. Take it from a plan or preview output that CI or the user ran; without one, leave this visual out.
+- **Dependency, runtime, or security upgrade:** a table with one row per component, at most 8: name, from version, to version, and the reason, such as a CVE ID or the bug the release fixes.
+- **Other flow or data change:** a Mermaid flowchart of at most 8 nodes.
+- **Library or function API change:** a short before and after usage snippet.
+- **Performance claim:** a table of measured before and after numbers with metric and unit. Without comparable measurements, leave the numbers out.
+
+A new screen, endpoint, or table has no before; show only the after. Capture screenshots and videos and attach them to the pull request with [references/capture.md](references/capture.md).
 
 ### Before Sending
 
-Reread the pull request as the reviewer, and again after any push that changes the patch. Check every sentence against the code at the head, and every claim about the behavior before the change against the target branch; the code is the only evidence, not docs or earlier pull request text. The title, first sentence, and visual must say what changed. Delete every sentence that restates the diff or narrates verification.
+Reread the pull request as the reviewer, and again after any push that changes the patch. Check every sentence against the code at the head, and every claim about the behavior before the change against the target branch; the code is the only evidence, not docs or earlier pull request text. Delete every sentence that restates the diff or narrates verification. Then read only the title, the first sentence, the visuals, and **What else**: they must tell the reviewer what changed and what they have to do.
 
 ## Text-Only Requests
 
