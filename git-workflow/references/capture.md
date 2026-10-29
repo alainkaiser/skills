@@ -6,16 +6,31 @@ Run the target branch from a worktree beside the repository, so the working tree
 
 Save every file in a temporary directory outside the repository, so nothing lands in the diff, and run the capture commands from there.
 
+## Tools
+
+`scripts/screenshot.mjs` and `scripts/record-video.mjs` sit in the folder that holds this skill's `SKILL.md`, usually `~/.agents/skills/git-workflow` or `~/.claude/skills/git-workflow`. Node 18 or newer is all they need up front:
+
+- They run `playwright-cli`, or fetch `@playwright/cli` through `npx` on first use, a download of about 19 MB.
+- They capture with the installed Google Chrome, or with Playwright's Chrome for Testing when Chrome is missing. When neither is there, they exit with code 3 and print what to download: Chrome for Testing, about 200 MB, into the user's Playwright cache. Show the user that message and ask; after a yes, run the same command again with `--install-browser`.
+
+Without Node, or when the user declines the download, open the pull request with the visuals that need no tools, such as tables, Mermaid diagrams, and snippets. Name the skipped visual and what it needs in your reply.
+
 ## Screenshots
 
-Take each pair at the same viewport with the browser tool you have. Name files by state, screen, and width: `before-dashboard-375.png`, `after-dashboard-375.png`.
+Take one screenshot per run, with the same viewport for each before and after pair. Name files by state, screen, and width:
 
-- **Theme rows:** switch the theme with the app's own theme control, or emulate the system setting when the app follows it, for example `playwright-cli -s=<session> set-color-scheme dark`.
+```bash
+node "<skill folder>/scripts/screenshot.mjs" --url http://localhost:3000/dashboard --viewport 375x812 --out after-dashboard-375.png
+```
+
+- `--color-scheme dark` captures a theme row when the app follows the system setting; otherwise switch the theme with the app's own control in `--steps`.
+- `--steps steps.js` runs `async page => { ... }` after the page loads to reach the state to capture, such as an open menu or a validation error.
+- `--setup setup.js` signs in or prepares data out of view, then reloads the URL. `--full-page` captures the whole scrollable page.
 - **Design comparison:** export the design frame at its own width and screenshot the built screen at that width: `design-checkout-375.png`, `built-checkout-375.png`.
 
 ## Videos
 
-`scripts/record-video.mjs` records the whole video in one run: a "Before" card, the journey on the target branch, an "After" card, the same journey on the head branch, and a badge naming the side throughout. Each card covers the page while the next app loads, so no loading screen shows. The script sits in the folder that holds this skill's `SKILL.md`, usually `~/.agents/skills/git-workflow` or `~/.claude/skills/git-workflow`. It needs Node and runs `playwright-cli`, or `npx --yes @playwright/cli` when that is not installed.
+`record-video.mjs` records the whole video in one run: a "Before" card, the journey on the target branch, an "After" card, the same journey on the head branch, and a badge naming the side throughout. Each card covers the page while the next app loads, so no loading screen shows.
 
 1. Start both versions at once: the target branch from its worktree on one port, the head branch on another. Give one URL the host `127.0.0.1` and the other `localhost`: the browser keeps cookies per host name, not per port, so this keeps the two sign-ins apart. The script loads each URL once before recording, so a dev server compiles before the camera runs.
 2. Write the journey, the steps a user takes, to a file such as `journey.js`:

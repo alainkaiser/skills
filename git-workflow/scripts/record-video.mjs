@@ -2,22 +2,19 @@
 // Records one pull request video with playwright-cli: a Before card, the journey on the target
 // branch, an After card, the same journey on the head, and a badge naming the side throughout.
 // The journey file holds `async (page, { say, slowMotion }) => { ... }`; see references/capture.md.
-import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { existsSync, rmSync } from "node:fs";
+import { resolve } from "node:path";
 import { parseArgs } from "node:util";
+import { browserOption, browserUsage, checkBrowser, openSession, parseViewport, readFunction, usageError, warmUp } from "./playwright.mjs";
 
 const usage = `Usage: node record-video.mjs --journey <file>
   [--before-url <url> --before-label <text>] [--after-url <url> --after-label <text>]
   [--setup <file>] [--caption <text>] [--out <file.webm>] [--viewport <width>x<height>]
-  [--corner top-right|top-left|bottom-right|bottom-left] [--reduced-motion]
-At least one side is required; with both, the video shows Before and then After.`;
+  [--corner top-right|top-left|bottom-right|bottom-left] [--reduced-motion] ${browserUsage}
+At least one side is required; with both, the video shows Before and then After.
+Exit codes: 1 recording failed, 2 bad arguments, 3 a tool is missing (the message says which).`;
 
-function fail(message) {
-  console.error(`${message}\n\n${usage}`);
-  process.exit(2);
-}
+const fail = (message) => usageError(usage, message);
 
 let values;
 try {
@@ -34,20 +31,16 @@ try {
       viewport: { type: "string", default: "1280x720" },
       corner: { type: "string", default: "top-right" },
       "reduced-motion": { type: "boolean", default: false },
+      browser: browserOption,
+      "install-browser": { type: "boolean", default: false },
     },
   }));
 } catch (error) {
   fail(error.message);
 }
 
-const readFunction = (file, option) => {
-  if (!file) return null;
-  if (!existsSync(file)) fail(`--${option} file not found: ${file}`);
-  return readFileSync(file, "utf8").trim().replace(/;$/, "");
-};
-const journey = readFunction(values.journey, "journey");
-const setup = readFunction(values.setup, "setup");
-const viewport = /^(\d{3,4})x(\d{3,4})$/.exec(values.viewport);
+const journey = readFunction(usage, values.journey, "journey");
+const setup = readFunction(usage, values.setup, "setup");
 const corner = /^(top|bottom)-(left|right)$/.exec(values.corner);
 const hasBefore = Boolean(values["before-url"] || values["before-label"]);
 const hasAfter = Boolean(values["after-url"] || values["after-label"]);
@@ -55,12 +48,12 @@ if (!journey) fail("--journey is required.");
 if (!hasBefore && !hasAfter) fail("Give --before-url and --before-label, --after-url and --after-label, or both pairs.");
 if (hasBefore && !(values["before-url"] && values["before-label"])) fail("--before-url and --before-label go together.");
 if (hasAfter && !(values["after-url"] && values["after-label"])) fail("--after-url and --after-label go together.");
-if (!viewport) fail("--viewport must look like 1280x720.");
 if (!corner) fail("--corner must be top-right, top-left, bottom-right, or bottom-left.");
 if (!values.out.endsWith(".webm")) fail("--out must end in .webm.");
+checkBrowser(usage, values.browser);
 
 const out = resolve(values.out);
-const [width, height] = [Number(viewport[1]), Number(viewport[2])];
+const { width, height } = parseViewport(usage, values.viewport);
 const [, vertical, horizontal] = corner;
 
 // Cards scale with the frame; badge, captions, and chip never shrink below their 1280x720 size,
@@ -154,6 +147,7 @@ const cfg = {
   out,
   width,
   height,
+  reducedMotion: values["reduced-motion"],
   blank: `data:text/html,${encodeURIComponent(`<body style="margin: 0; background: ${ink}">`)}`,
   point: `width: ${chrome(34)}; height: ${chrome(34)}; border-radius: 50%; background: rgba(122, 162, 255, .22); box-shadow: 0 0 0 2px rgba(122, 162, 255, .75);`,
   caption: { bottom: captionHtml("bottom"), top: captionHtml("top") },
@@ -206,6 +200,7 @@ ${journey}
   };
 
   await page.setViewportSize({ width: cfg.width, height: cfg.height });
+  if (cfg.reducedMotion) await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(cfg.blank);
   await page.screencast.start({ path: cfg.out, size: { width: cfg.width, height: cfg.height }, fps: 30 });
   await sleep(300);
@@ -240,48 +235,14 @@ ${journey}
   await page.screencast.stop();
 }`;
 
-// A first request makes dev servers compile the page now, not during the recording.
-for (const { url } of phases) {
-  try {
-    await fetch(url, { signal: AbortSignal.timeout(180000) });
-  } catch (error) {
-    console.error(`Could not load ${url} (${error.cause?.code ?? error.message}). Start the app and run again.`);
-    process.exit(1);
-  }
-}
-
-const windows = process.platform === "win32";
-const quote = (arg) => (windows && /[\s"&<>|^]/.test(arg) ? `"${arg.replace(/"/g, '""')}"` : arg);
-const minimum = [0, 1, 22];
-const probe = spawnSync("playwright-cli", ["--version"], { encoding: "utf8", shell: windows });
-const found = (/(\d+)\.(\d+)\.(\d+)/.exec(probe.stdout ?? "") ?? []).slice(1).map(Number);
-const current = probe.status === 0 && found.length === 3 && (found[0] - minimum[0] || found[1] - minimum[1] || found[2] - minimum[2]) >= 0;
-const [command, prefix] = current ? ["playwright-cli", []] : ["npx", ["--yes", "@playwright/cli@0.1"]];
-const session = `-s=pr-video-${process.pid}`;
-const cli = (...args) =>
-  spawnSync(command, [...prefix, session, ...args].map(quote), { stdio: ["ignore", "pipe", "inherit"], encoding: "utf8", shell: windows });
-
-const work = mkdtempSync(join(tmpdir(), "pr-video-"));
-const codeFile = join(work, "record.js");
-writeFileSync(codeFile, code);
+await warmUp(phases.map((phase) => phase.url));
 rmSync(out, { force: true });
-
-let failed = true;
-try {
-  if (cli("open").status !== 0) throw new Error("playwright-cli could not open a browser.");
-  if (values["reduced-motion"] && cli("set-reduced-motion", "reduce").status !== 0) throw new Error("Could not turn on reduced motion.");
-  const run = cli("run-code", "--filename", codeFile);
-  if (run.status !== 0 || /^### Error/m.test(run.stdout)) {
-    process.stderr.write(run.stdout);
-    throw new Error("The recording failed; no video was written. Fix the journey or setup and run again.");
-  }
-  failed = false;
-} catch (error) {
-  console.error(error.message);
-} finally {
-  cli("close");
-  rmSync(work, { recursive: true, force: true });
-  if (failed) rmSync(out, { force: true });
+const session = openSession({ browser: values.browser, installBrowser: values["install-browser"] });
+const recorded = session.runCode(code);
+session.close();
+if (!recorded || !existsSync(out)) {
+  rmSync(out, { force: true });
+  console.error("The recording failed; no video was written. Fix the journey or setup and run again.");
+  process.exit(1);
 }
-if (failed || !existsSync(out)) process.exit(1);
 console.log(out);

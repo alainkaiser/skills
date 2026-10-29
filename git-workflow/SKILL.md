@@ -105,7 +105,7 @@ Add the visual that shows the change fastest. A change that spans two layers, su
 - **Library or function API change:** a short before and after usage snippet.
 - **Performance claim:** a table of measured before and after numbers with metric and unit. Without comparable measurements, leave the numbers out.
 
-A new screen, endpoint, or table has no before; show only the after. Capture screenshots and videos and attach them to the pull request with [references/capture.md](references/capture.md).
+A new screen, endpoint, or table has no before; show only the after. Capture and attach screenshots and videos, or continue without them when a tool is missing, with [references/capture.md](references/capture.md).
 
 ### Before Sending
 
