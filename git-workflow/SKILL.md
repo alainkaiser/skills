@@ -42,6 +42,8 @@ A harness can add attribution after you write: a branch prefix setting, a commit
 
 The title uses the commit header format and describes the whole change against the target branch; squash merges turn it into the commit on that branch.
 
+Assign the pull request to its author, the person responsible for getting it merged: `gh pr create --assignee @me`.
+
 A reviewer should understand the change from the title, the first sentence, and the visual, then read the diff for the details. When the repository has a pull request template, fill its sections instead of this shape; the caps and rules below still apply.
 
 ```markdown
@@ -64,6 +66,15 @@ A reviewer should understand the change from the title, the first sentence, and 
 - **What else:** only what the reviewer must decide, act on, or check by hand: a deviation from the ticket, a risk, a rollout step, a check that failed or could not run.
 - Each bullet is one sentence of about 100 characters or fewer. Items beyond a cap go in your reply to the user.
 - Drop empty sections. A small change is the title plus one sentence.
+
+Write for a reviewer who reads once, between other work:
+
+- The first sentence names the outcome, what now works or behaves differently, with a user, the system, or a feature as its subject: "Tenant admins can search the dashboard by tenant name."
+- Every bullet stands alone. It names its subject and makes sense without the other bullets, the headings, or the ticket.
+- Name the concrete thing: the screen, endpoint, field, or command, in place of summary words such as "improvements" or "cleanup".
+- Use literal words. Replace idioms and figurative phrases with the plain action, and keep a hedge only for real uncertainty.
+- A check the reviewer performs by hand is one **What else** bullet with a nested numbered list, one action per step, at most 5 steps. The steps keep the bullet length limit and do not count toward the bullet cap.
+- A risk states the condition and its effect: "Signed-in users log out once on deploy because the session cookie is renamed."
 
 The pull request is not the task report. Test counts, commands run, and verification narrative go in your reply to the user, as do findings unrelated to the change. The pull request mentions a check only when it failed, was skipped, or the reviewer must repeat it.
 
