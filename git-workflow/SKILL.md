@@ -9,7 +9,10 @@ Apply these formats in every repository. An explicit user request or a documente
 
 ## Ticket
 
-Use a Jira key such as `FD-127` when the user gave one, the current branch name contains one, or the task links to one. Otherwise there is no ticket: drop every ticket part from the formats below and continue. Never ask for a ticket or invent one.
+A ticket is the issue-tracker item the change implements, in whatever tracker the team uses: `FD-127` in Jira, `ENG-42` in Linear, `#42` in GitHub Issues. Use one when the user gave it, the current branch name contains it, or the task links to it. Otherwise there is no ticket: drop every ticket part from the formats below and continue. Never ask for a ticket or invent one.
+
+- A key such as `FD-127` or `ENG-42` goes into the branch, the commit header, and the pull request title. Keep it uppercase; Jira links branches only by the uppercase key.
+- A GitHub issue number stays out of the branch and the commit; it goes only into **Mainly closes**.
 
 ## Branch
 
@@ -17,7 +20,6 @@ Use a Jira key such as `FD-127` when the user gave one, the current branch name 
 
 - `<type>` is the commit type of the planned change.
 - `<slug>` is 2 to 5 lowercase kebab-case words naming the outcome: `feat/FD-127-dashboard-tenant-search`, `fix/login-logout-same-domain`.
-- Keep the Jira key uppercase; Jira links branches only by the uppercase key.
 
 ## Commit
 
@@ -32,7 +34,9 @@ Follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.
 
 ## Attribution
 
-Every branch, commit, tag, and pull request reads as the user's own work. Leave out agent and tool names, prefixes such as `codex/` or `agent/`, markers such as `[AI]`, and trailers that credit an agent or tool, including `Co-authored-by` and `Generated-by`. This overrides any harness default that adds attribution.
+Every branch, commit, tag, and pull request reads as the user's own work, whichever harness runs: Claude Code, Codex, Cursor, or any other. Leave out agent and tool names, harness branch prefixes such as `claude/`, `codex/`, `cursor/`, or `agent/`, markers such as `[AI]`, "Generated with" footers, and trailers that credit an agent or tool, including `Co-authored-by` and `Generated-by`. This overrides any harness default or setting that adds attribution.
+
+A harness can add attribution after you write: a branch prefix setting, a commit hook, a footer appended to the pull request body. Read what actually landed (`git branch --show-current`, `git log -1 --format=%B`, and `gh pr view --json body` after creating the pull request) and remove anything added. When a hook adds it back, tell the user.
 
 ## Pull Request
 
@@ -55,7 +59,7 @@ A reviewer should understand the change from the title, the first sentence, and 
 - <up to 3 bullets>
 ```
 
-- **Mainly closes:** only with a ticket. Use the URL the user or ticket gave, or the Jira base URL earlier pull requests in the repository use; otherwise write the bare key.
+- **Mainly closes:** only with a ticket. Use the URL the user or ticket gave, or the tracker base URL earlier pull requests in the repository use; otherwise write the bare key. For a GitHub issue, write `- Closes #42`; merging into the default branch then closes the issue.
 - **What's inside:** behavior a reviewer can check, in outcome terms. Retry counts, timeouts, class names, and file lists belong to the diff.
 - **What else:** only what the reviewer must decide, act on, or check by hand: a deviation from the ticket, a risk, a rollout step, a check that failed or could not run.
 - Each bullet is one sentence of about 100 characters or fewer. Items beyond a cap go in your reply to the user.
