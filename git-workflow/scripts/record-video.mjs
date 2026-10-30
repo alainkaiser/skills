@@ -76,6 +76,8 @@ const sides = {
   before: { title: "Before", color: "#f5a524" },
   after: { title: "After", color: "#2fd08a" },
 };
+const backdrop = (side) =>
+  `radial-gradient(${stage(900)} ${stage(520)} at 50% 38%, ${sides[side].color}1c, transparent 70%), radial-gradient(${stage(1400)} ${stage(900)} at 50% 50%, #161a21, ${ink} 75%)`;
 const phases = [
   ...(hasBefore ? [{ side: "before", url: values["before-url"], label: values["before-label"] }] : []),
   ...(hasAfter ? [{ side: "after", url: values["after-url"], label: values["after-label"] }] : []),
@@ -103,8 +105,7 @@ function card({ side, label }, motion) {
   @keyframes prv-rise { from { opacity: 0; transform: translateY(14px); filter: blur(6px) } to { opacity: 1; transform: none; filter: none } }
   @keyframes prv-leave { to { opacity: 0; transform: scale(1.012); filter: blur(4px) } }
 </style>
-<div style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background:
-  radial-gradient(${stage(900)} ${stage(520)} at 50% 38%, ${color}1c, transparent 70%), radial-gradient(${stage(1400)} ${stage(900)} at 50% 50%, #161a21, ${ink} 75%);
+<div style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: ${backdrop(side)};
   font-family: ${sans}; -webkit-font-smoothing: antialiased; ${fade}">
   <div style="max-width: 88vw; text-align: center; ${rise}">
     ${progress(side)}
@@ -157,6 +158,7 @@ const cfg = {
     url: phase.url,
     cardIn: card(phase, "in"),
     cardHold: card(phase, "hold"),
+    backdrop: backdrop(phase.side),
     cardOut: card(phase, "out"),
     badge: badge(phase),
   })),
@@ -199,6 +201,22 @@ ${journey}
     }
   };
 
+  // Overlays come back only after a new document paints once. A picture of the card, set as a
+  // stylesheet before that first paint, covers the frame in between without touching the DOM.
+  const veil = async backdrop => {
+    const image = (await page.screenshot({ type: 'jpeg', quality: 92 })).toString('base64');
+    const script = await page.addInitScript(layers => {
+      const sheet = new CSSStyleSheet();
+      sheet.replaceSync('html::before { content: ""; position: fixed; inset: 0; z-index: 2147483647; pointer-events: none; background: ' + layers + '; }');
+      sheet.prVeil = true;
+      document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+    }, 'url(data:image/jpeg;base64,' + image + ') center / 100% 100% no-repeat, ' + backdrop);
+    return async () => {
+      await script.dispose();
+      await page.evaluate(() => { document.adoptedStyleSheets = document.adoptedStyleSheets.filter(sheet => !sheet.prVeil); }).catch(() => {});
+    };
+  };
+
   await page.setViewportSize({ width: cfg.width, height: cfg.height });
   if (cfg.reducedMotion) await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(cfg.blank);
@@ -214,12 +232,14 @@ ${journey}
     await say(null);
     if (badge) { await badge.dispose(); badge = null; }
     const shown = Date.now();
+    const lift = await veil(phase.backdrop);
     await page.goto(phase.url, { waitUntil: 'load', timeout: 60000 });
     if (setup) {
       await setup(page);
       await page.goto(phase.url, { waitUntil: 'load', timeout: 60000 });
     }
     await sleep(Math.max(0, 1500 - (Date.now() - shown)));
+    await lift();
     badge = await page.screencast.showOverlay(phase.badge);
     const cardOut = await page.screencast.showOverlay(phase.cardOut);
     await hold.dispose();
