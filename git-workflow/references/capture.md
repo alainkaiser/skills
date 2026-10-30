@@ -8,7 +8,7 @@ Save every file in a temporary directory outside the repository, so nothing land
 
 ## Tools
 
-`scripts/screenshot.mjs` and `scripts/record-video.mjs` sit in the folder that holds this skill's `SKILL.md`, usually `~/.agents/skills/git-workflow` or `~/.claude/skills/git-workflow`. Node 18 or newer is all they need up front:
+`scripts/screenshot.mjs` and `scripts/record-video.mjs` sit in the skill folder: the folder that holds the `SKILL.md` the agent app loaded for this skill, whether a skills directory or a plugin cache. Node 20 or newer is all they need up front:
 
 - They run `playwright-cli`, or fetch `@playwright/cli` through `npx` on first use, a download of about 19 MB.
 - They capture with the installed Google Chrome, or with Playwright's Chrome for Testing when Chrome is missing. When neither is there, they exit with code 3 and print what to download: Chrome for Testing, about 200 MB, into the user's Playwright cache. Show the user that message and ask; after a yes, run the same command again with `--install-browser`.
