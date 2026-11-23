@@ -4,4 +4,4 @@ focus: trace
 weight: 1
 ---
 
-pr.md states that the before side of the video shows the orders table briefly switching to the "No orders" empty state while the new filter loads.
+The planned video shows the bug on the before side: its journey makes the orders load slowly enough, for example by delaying the orders request, for the "No orders" flash to appear on camera.

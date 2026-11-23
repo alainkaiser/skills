@@ -4,4 +4,4 @@ focus: trace
 weight: 1
 ---
 
-pr.md shows the signup form's error state with before and after screenshots taken after submitting invalid input.
+pr.md plans before and after screenshots of the signup form showing its validation errors, captured after a submit that triggers them, such as submitting the form empty.
