@@ -31,4 +31,4 @@ Install selected skills from the local checkout globally for Codex, Cursor, and 
 npx skills add "$HOME/Documents/dev/personal/skills" --global --skill git-workflow --agent codex cursor claude-code --yes
 ```
 
-The CLI copies the current files into the shared global skill folder and links Claude Code to that installation. Rerun this command after local edits. Global local-path installs are not recorded in the CLI's global lockfile. After publishing, reinstall from `alainkaiser/skills` with the same options to enable GitHub source tracking and `npx skills update -g`.
+The CLI copies the current files into the shared global skill folder and links Claude Code to that installation. Rerun this command after local edits. A global local-path install points the skill's entry in the CLI's global lockfile at the local checkout, so `npx skills update -g` follows the checkout. After publishing, reinstall from `alainkaiser/skills` with the same options to track GitHub again.
