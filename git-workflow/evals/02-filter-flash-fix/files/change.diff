@@ -1,0 +1,59 @@
+diff --git a/src/routes/orders.tsx b/src/routes/orders.tsx
+index 51d0c3e..a7b2f90 100644
+--- a/src/routes/orders.tsx
++++ b/src/routes/orders.tsx
+@@ -1,8 +1,9 @@
+-import { useQuery } from "@tanstack/react-query";
++import { keepPreviousData, useQuery } from "@tanstack/react-query";
+ import { useSearchParams } from "react-router";
+ import { fetchOrders, type OrderStatus } from "../api/orders";
+ import { EmptyState } from "../components/EmptyState";
+ import { OrdersTable } from "../components/OrdersTable";
++import { OrdersTableSkeleton } from "../components/OrdersTableSkeleton";
+ import { Spinner } from "../components/Spinner";
+ import { StatusFilter } from "../components/StatusFilter";
+
+@@ -10,21 +11,26 @@ export default function OrdersPage() {
+   const [searchParams, setSearchParams] = useSearchParams();
+   const status = (searchParams.get("status") ?? "all") as OrderStatus | "all";
+
+-  const { data: orders = [], isFetching } = useQuery({
++  const { data: orders = [], isPending, isFetching, isPlaceholderData } = useQuery({
+     queryKey: ["orders", status],
+     queryFn: () => fetchOrders(status),
++    placeholderData: keepPreviousData,
+   });
+
+   return (
+     <main className="relative p-6">
+       <StatusFilter value={status} onChange={(next) => setSearchParams({ status: next })} />
+       {isFetching && <Spinner className="absolute right-6 top-6" />}
+-      {orders.length === 0 ? (
++      {isPending ? (
++        <OrdersTableSkeleton />
++      ) : orders.length === 0 ? (
+         <EmptyState title="No orders" description="Orders you receive show up here." />
+       ) : (
+-        <OrdersTable orders={orders} />
++        <div aria-busy={isPlaceholderData} className={isPlaceholderData ? "opacity-60" : undefined}>
++          <OrdersTable orders={orders} />
++        </div>
+       )}
+     </main>
+   );
+ }
+diff --git a/src/components/OrdersTableSkeleton.tsx b/src/components/OrdersTableSkeleton.tsx
+new file mode 100644
+index 0000000..c3e91d4
+--- /dev/null
++++ b/src/components/OrdersTableSkeleton.tsx
+@@ -0,0 +1,11 @@
++export function OrdersTableSkeleton() {
++  return (
++    <div role="status" aria-label="Loading orders" className="mt-4 space-y-2">
++      {Array.from({ length: 6 }, (_, row) => (
++        <div key={row} className="h-10 animate-pulse rounded bg-gray-100" />
++      ))}
++    </div>
++  );
++}

@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: 04-signup-error-copy
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  The pull request shows the signup form's new error state with before and after screenshots taken after submitting invalid input, and plans no video.
