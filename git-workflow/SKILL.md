@@ -85,11 +85,13 @@ Describe the change that will land. When the scope changes, rewrite the title an
 
 ### Visuals
 
-Add the visual that shows the change fastest. A change that spans two layers, such as an endpoint and its table, gets one for each, at most two, in the order a reviewer reads them.
+Add the visual from which a reviewer grasps the change fastest. Add a second, at most, only when one cannot show the whole change: a change that spans two layers, such as an endpoint and its table, gets one for each, in the order a reviewer reads them.
 
-- **UI change on one screen:** a table of at most 3 rows, each a before and an after screenshot at the same viewport. Each row is a state, width, or theme where the change is visible: an error state, 375 px, dark mode.
-- **UI built from a design:** the design image next to a screenshot of the built screen at the design's width, in place of before and after. Use a design image the user gave or one a design tool in your harness exports; without one, show before and after.
-- **UI flow across screens:** a stepper, a multi-page form, scrolling. One video of the same journey before and then after, under 60 seconds.
+A UI change shows as a state, a behavior, or both. A state is how a screen looks once it settles: a layout, a color, copy, an error message, an open menu, a hover style. A behavior is what happens between states: how the screen responds while the user drags, types, or scrolls; motion; timing such as a delay, a debounce, or an auto-dismiss; a journey across screens; a bug that appears only while something happens, such as a flicker, a jump, lost focus, or a double submit. Screenshots show states and a video shows behavior. Record a video when a reviewer comparing the before and after screenshots would still have to imagine what happens between them; otherwise the screenshots are enough. A change with both gets the video, which shows its states too.
+
+- **UI state:** a table of at most 3 rows, each a before and an after screenshot at the same viewport. Each row is a screen, state, width, or theme where the change is visible: an error state, 375 px, dark mode.
+- **UI built from a design:** the design image next to a screenshot of the built screen at the design's width, in place of before and after. Use a design image the user gave or one a design tool in your harness exports; without one, show before and after. When the screen also has new behavior, its video is the second visual.
+- **UI behavior:** one video of the same journey before and then after, under 60 seconds, holding only the steps that reach and show the behavior. For a fix, the before side shows the bug happening.
 - **Animation or transition change:** that video with the step that starts the motion in slow motion, so the reviewer sees the motion itself. When the change handles reduced motion, the second visual is a video of the head branch with reduced motion on.
 - **HTTP API change:** a table of the changed endpoints, one row each, at most 8. Add a short before and after request or response snippet when a payload shape changes.
 
@@ -105,7 +107,7 @@ Add the visual that shows the change fastest. A change that spans two layers, su
 - **Library or function API change:** a short before and after usage snippet.
 - **Performance claim:** a table of measured before and after numbers with metric and unit. Without comparable measurements, leave the numbers out.
 
-A new screen, endpoint, or table has no before; show only the after. Capture and attach screenshots and videos, or continue without them when a tool is missing, with [references/capture.md](references/capture.md).
+A new screen, endpoint, or table has no before; show only the after. Capture and attach screenshots and videos with [references/capture.md](references/capture.md), which also covers a visual that cannot be made.
 
 ### Before Sending
 

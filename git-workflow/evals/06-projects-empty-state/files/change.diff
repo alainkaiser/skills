@@ -1,0 +1,58 @@
+diff --git a/src/components/ProjectsEmptyState.tsx b/src/components/ProjectsEmptyState.tsx
+new file mode 100644
+index 0000000..4d8a2f6
+--- /dev/null
++++ b/src/components/ProjectsEmptyState.tsx
+@@ -0,0 +1,22 @@
++import { FolderPlus } from "lucide-react";
++import { Link } from "react-router";
++
++export function ProjectsEmptyState() {
++  return (
++    <div className="mx-auto mt-16 flex max-w-sm flex-col items-center text-center">
++      <div className="flex size-14 items-center justify-center rounded-full bg-indigo-50">
++        <FolderPlus aria-hidden className="size-7 text-indigo-600" />
++      </div>
++      <h2 className="mt-4 text-lg font-semibold text-gray-900">Create your first project</h2>
++      <p className="mt-1 text-sm text-gray-500">
++        Projects group your boards, files, and members. You can invite your team once it exists.
++      </p>
++      <Link
++        to="/projects/new"
++        className="mt-6 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
++      >
++        New project
++      </Link>
++    </div>
++  );
++}
+diff --git a/src/routes/projects.tsx b/src/routes/projects.tsx
+index 6f1b3a9..0c2e7d4 100644
+--- a/src/routes/projects.tsx
++++ b/src/routes/projects.tsx
+@@ -1,6 +1,7 @@
+ import { useLoaderData } from "react-router";
+ import { getProjects } from "../api/projects";
+ import { ProjectCard } from "../components/ProjectCard";
++import { ProjectsEmptyState } from "../components/ProjectsEmptyState";
+
+ export async function loader() {
+   return { projects: await getProjects() };
+@@ -11,13 +12,13 @@ export default function ProjectsPage() {
+
+   return (
+     <main className="p-6">
+       <h1 className="text-2xl font-semibold">Projects</h1>
+       {projects.length === 0 ? (
+-        <p className="mt-6 text-gray-500">No projects</p>
++        <ProjectsEmptyState />
+       ) : (
+         <div className="mt-6 grid grid-cols-3 gap-4">
+           {projects.map((project) => (
+             <ProjectCard key={project.id} project={project} />
+           ))}
+         </div>
+       )}
+     </main>
+   );
+ }

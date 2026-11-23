@@ -1,0 +1,45 @@
+diff --git a/src/routes/settings.tsx b/src/routes/settings.tsx
+index 0a7d2c1..e48b5f9 100644
+--- a/src/routes/settings.tsx
++++ b/src/routes/settings.tsx
+@@ -6,30 +6,36 @@ export default function SettingsPage() {
+   const { user } = useCurrentUser();
+
+   return (
+-    <main className="mx-auto max-w-3xl p-4">
+-      <h1 className="mb-4 text-xl font-bold">Settings</h1>
+-      <div className="space-y-3">
+-        <section className="rounded border p-4">
+-          <h2 className="font-semibold">Profile</h2>
+-          <p className="text-sm text-gray-600">Your name and avatar.</p>
++    <main className="mx-auto max-w-3xl px-6 py-10">
++      <h1 className="mb-8 text-2xl font-semibold tracking-tight text-gray-900 dark:text-gray-50">Settings</h1>
++      <div className="space-y-6">
++        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
++          <h2 className="text-base font-semibold text-gray-900 dark:text-gray-50">Profile</h2>
++          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Your name and avatar.</p>
+           <ProfileForm user={user} />
+         </section>
+-        <section className="rounded border p-4">
+-          <h2 className="font-semibold">Notifications</h2>
+-          <p className="text-sm text-gray-600">Choose what we email you about.</p>
++        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
++          <h2 className="text-base font-semibold text-gray-900 dark:text-gray-50">Notifications</h2>
++          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Choose what we email you about.</p>
+           <NotificationForm user={user} />
+         </section>
+-        <section className="rounded border border-red-300 p-4">
+-          <h2 className="font-semibold text-red-700">Delete account</h2>
+-          <p className="text-sm text-gray-600">This removes all your data.</p>
+-          <button className="mt-2 rounded bg-red-600 px-3 py-1 text-white">Delete account</button>
++        <section className="rounded-xl border border-red-200 bg-red-50/50 p-6 dark:border-red-900/60 dark:bg-red-950/30">
++          <h2 className="text-base font-semibold text-red-700 dark:text-red-400">Delete account</h2>
++          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">This removes all your data.</p>
++          <button className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
++            Delete account
++          </button>
+         </section>
+       </div>
+     </main>
+   );
+ }

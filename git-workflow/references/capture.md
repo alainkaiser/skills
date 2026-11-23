@@ -13,7 +13,7 @@ Save every file in a temporary directory outside the repository, so nothing land
 - They run `playwright-cli`, or fetch `@playwright/cli` through `npx` on first use, a download of about 19 MB.
 - They capture with the installed Google Chrome, or with Playwright's Chrome for Testing when Chrome is missing. When neither is there, they exit with code 3 and print what to download: Chrome for Testing, about 200 MB, into the user's Playwright cache. Show the user that message and ask; after a yes, run the same command again with `--install-browser`.
 
-Without Node, or when the user declines the download, open the pull request with the visuals that need no tools, such as tables, Mermaid diagrams, and snippets. Name the skipped visual and what it needs in your reply.
+When a visual cannot be made, open the pull request with the ones you have. Without Node, or when the user declines the download, those are the visuals that need no tools, such as tables, Mermaid diagrams, and snippets. When a recording still fails after you fix the journey or setup, take before and after screenshots of the states it would show. Name each missing visual and the reason in your reply, so the user can make it or ask you to try again.
 
 ## Screenshots
 
@@ -49,6 +49,7 @@ node "<skill folder>/scripts/screenshot.mjs" --url http://localhost:3000/dashboa
    - `page` is a Playwright page. Each action shows an animated cursor and waits for it, so the journey needs no pauses.
    - `say(text)` shows a caption at the bottom until the next `say`; `say(null)` removes it. One short caption per step reads best. `say(text, { at: 'top' })` moves it up when it would cover a button the journey uses.
    - Type test accounts and test data only; the video shows everything typed.
+   - Something that shows only for a moment, such as a loading flash, needs time on camera: delay its request in the journey with `page.route` and `page.waitForTimeout`, since the journey runs without `setTimeout`. Name the delay in a caption, and `page.unroute` it at the end, because both sides run in the same page.
 3. Record:
 
    ```bash

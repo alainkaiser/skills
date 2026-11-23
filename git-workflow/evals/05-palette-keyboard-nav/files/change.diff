@@ -1,0 +1,92 @@
+diff --git a/src/components/CommandPalette.tsx b/src/components/CommandPalette.tsx
+index 92e4f1a..5b0c7e3 100644
+--- a/src/components/CommandPalette.tsx
++++ b/src/components/CommandPalette.tsx
+@@ -1,4 +1,4 @@
+-import { useState } from "react";
++import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+ import { useNavigate } from "react-router";
+ import { searchCommands, type Command } from "../lib/commands";
+
+@@ -6,8 +6,38 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
+   const navigate = useNavigate();
+   const [query, setQuery] = useState("");
++  const [activeIndex, setActiveIndex] = useState(0);
++  const listRef = useRef<HTMLUListElement>(null);
+   const results = searchCommands(query);
+
++  useEffect(() => setActiveIndex(0), [query]);
++
++  useEffect(() => {
++    listRef.current?.children[activeIndex]?.scrollIntoView({ block: "nearest" });
++  }, [activeIndex]);
++
++  function run(command: Command) {
++    navigate(command.href);
++    onClose();
++  }
++
++  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
++    const last = results.length - 1;
++    const moves: Record<string, number> = {
++      ArrowDown: activeIndex === last ? 0 : activeIndex + 1,
++      ArrowUp: activeIndex === 0 ? last : activeIndex - 1,
++      Home: 0,
++      End: last,
++    };
++    if (event.key in moves) {
++      event.preventDefault();
++      setActiveIndex(moves[event.key]);
++    } else if (event.key === "Enter" && results[activeIndex]) {
++      event.preventDefault();
++      run(results[activeIndex]);
++    }
++  }
++
+   return (
+     <div role="dialog" aria-label="Command palette" className="fixed inset-x-0 top-24 mx-auto w-full max-w-lg rounded-xl bg-white shadow-2xl">
+       <input
+         autoFocus
++        role="combobox"
++        aria-expanded
++        aria-controls="command-results"
++        aria-activedescendant={results[activeIndex] ? `command-${results[activeIndex].id}` : undefined}
+         value={query}
+         onChange={(event) => setQuery(event.target.value)}
++        onKeyDown={handleKeyDown}
+         placeholder="Search commands"
+         className="w-full border-b px-4 py-3 outline-none"
+       />
+-      <ul className="max-h-80 overflow-y-auto py-2">
+-        {results.map((command) => (
+-          <li key={command.id}>
+-            <button
+-              type="button"
+-              onClick={() => {
+-                navigate(command.href);
+-                onClose();
+-              }}
+-              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+-            >
+-              {command.label}
+-            </button>
+-          </li>
+-        ))}
++      <ul id="command-results" role="listbox" ref={listRef} className="max-h-80 overflow-y-auto py-2">
++        {results.map((command, index) => (
++          <li
++            key={command.id}
++            id={`command-${command.id}`}
++            role="option"
++            aria-selected={index === activeIndex}
++            onMouseMove={() => setActiveIndex(index)}
++            onClick={() => run(command)}
++            className="cursor-pointer px-4 py-2 text-sm aria-selected:bg-gray-100"
++          >
++            {command.label}
++          </li>
++        ))}
+       </ul>
+     </div>
+   );
+ }

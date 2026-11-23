@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: 03-settings-restyle
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  The pull request shows the restyled settings cards with a before and after screenshot table, including a dark mode row, and plans no video.

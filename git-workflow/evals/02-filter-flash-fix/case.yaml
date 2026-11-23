@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: 02-filter-flash-fix
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  The pull request plans one before and after video of changing the orders status filter, where the before side shows the table flashing to the empty state while the new filter loads.

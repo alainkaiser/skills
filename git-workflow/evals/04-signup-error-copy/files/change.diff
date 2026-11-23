@@ -1,0 +1,74 @@
+diff --git a/src/components/SignupForm.tsx b/src/components/SignupForm.tsx
+index 7c2b9e0..1f6a3d8 100644
+--- a/src/components/SignupForm.tsx
++++ b/src/components/SignupForm.tsx
+@@ -1,12 +1,13 @@
++import { CircleAlert } from "lucide-react";
+ import { useForm } from "react-hook-form";
+ import { z } from "zod";
+ import { zodResolver } from "@hookform/resolvers/zod";
+
+ const schema = z.object({
+-  email: z.string().email("Invalid email"),
+-  password: z.string().min(8, "Too short"),
++  email: z.string().email("Enter an email address like name@example.com."),
++  password: z.string().min(8, "Use at least 8 characters."),
+   terms: z.literal(true, {
+-    errorMap: () => ({ message: "Required" }),
++    errorMap: () => ({ message: "Accept the terms to create an account." }),
+   }),
+ });
+
+@@ -40,22 +41,38 @@ export function SignupForm({ onSubmit }: { onSubmit: (values: SignupValues) => void }) {
+       <label className="block text-sm font-medium" htmlFor="email">
+         Email
+       </label>
+-      <input id="email" type="email" className="mt-1 w-full rounded border px-3 py-2" {...register("email")} />
+-      {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
++      <input
++        id="email"
++        type="email"
++        aria-invalid={Boolean(errors.email)}
++        aria-describedby={errors.email ? "email-error" : undefined}
++        className="mt-1 w-full rounded border px-3 py-2 aria-invalid:border-red-600 aria-invalid:ring-1 aria-invalid:ring-red-600"
++        {...register("email")}
++      />
++      <FieldError id="email-error" message={errors.email?.message} />
+
+       <label className="mt-4 block text-sm font-medium" htmlFor="password">
+         Password
+       </label>
+-      <input id="password" type="password" className="mt-1 w-full rounded border px-3 py-2" {...register("password")} />
+-      {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
++      <input
++        id="password"
++        type="password"
++        aria-invalid={Boolean(errors.password)}
++        aria-describedby={errors.password ? "password-error" : undefined}
++        className="mt-1 w-full rounded border px-3 py-2 aria-invalid:border-red-600 aria-invalid:ring-1 aria-invalid:ring-red-600"
++        {...register("password")}
++      />
++      <FieldError id="password-error" message={errors.password?.message} />
+
+       <label className="mt-4 flex items-center gap-2 text-sm">
+         <input type="checkbox" {...register("terms")} /> I accept the terms
+       </label>
+-      {errors.terms && <p className="text-xs text-red-500">{errors.terms.message}</p>}
++      <FieldError id="terms-error" message={errors.terms?.message} />
+
+       <button type="submit" className="mt-6 w-full rounded bg-gray-900 py-2 text-white">
+         Create account
+       </button>
+     </form>
+   );
+ }
++
++function FieldError({ id, message }: { id: string; message?: string }) {
++  if (!message) return null;
++  return (
++    <p id={id} className="mt-1 flex items-center gap-1 text-sm text-red-700">
++      <CircleAlert aria-hidden className="size-4 shrink-0" />
++      {message}
++    </p>
++  );
++}
