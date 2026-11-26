@@ -49,7 +49,7 @@ node "<skill folder>/scripts/screenshot.mjs" --url http://localhost:3000/dashboa
    - `page` is a Playwright page. Each action shows an animated cursor and waits for it, so the journey needs no pauses.
    - `say(text)` shows a caption at the bottom until the next `say`; `say(null)` removes it. One short caption per step reads best. `say(text, { at: 'top' })` moves it up when it would cover a button the journey uses.
    - Type test accounts and test data only; the video shows everything typed.
-   - Something that shows only for a moment, such as a loading flash, needs time on camera: delay its request in the journey with `page.route` and `page.waitForTimeout`, since the journey runs without `setTimeout`. Name the delay in a caption, and `page.unroute` it at the end, because both sides run in the same page.
+   - Keep the original timing on both sides when recording a flicker, debounce, or other timing change. To hold a loading state for inspection, delay its request with `page.route` and `page.waitForTimeout` only if both versions still show the behavior you want to compare. State the delay in a caption and call `page.unroute` after the step. Both sides use the same page.
 3. Record:
 
    ```bash
